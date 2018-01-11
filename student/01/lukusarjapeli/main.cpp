@@ -12,7 +12,13 @@ int main()
         if(i%3==0){
             s = "zip";
         }
-
+        if(i%7==0){
+            if(s == "zip"){
+                s+=" boing";
+            }else{
+                s="boing";
+            }
+        }
 
         std::cout << s << std::endl;
     }
