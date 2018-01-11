@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string>
 
 int main()
 {
@@ -8,6 +8,12 @@ int main()
     std::cin >> numbers;
 
     for(int i = 1; i<=numbers; i+=1){
-        std::cout << i << std::endl;
+        std::string s = std::to_string(i);
+        if(i%3==0){
+            s = "zip";
+        }
+
+
+        std::cout << s << std::endl;
     }
 }
