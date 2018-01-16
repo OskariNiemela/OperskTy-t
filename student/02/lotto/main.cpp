@@ -52,7 +52,7 @@ int main()
         if (balls_drawn<=balls_total){
             unsigned long int no_combinations = 0;
             no_combinations = combinations(balls_total,balls_drawn);
-            std::cout<<"The probability of guessing all "<<balls_drawn<<" correctly is "<<1<<"/"<<no_combinations<<std::endl;
+            std::cout<<"The probability of guessing all "<<balls_drawn<<" balls correctly is "<<1<<"/"<<no_combinations<<std::endl;
         }
         else{
             std::cout<<"At most the total number of balls can be drawn."<<std::endl;
