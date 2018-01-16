@@ -1,13 +1,5 @@
 #include <iostream>
 
-int factorial(unsigned long int to_factor){
-    unsigned long int total = 1;
-    for(unsigned long int a=2;a<=to_factor;a+=1){
-        total = total*a;
-
-    }
-    return total;
-}
 
 int combinations(int all,int drawn){
     int multiplier = all-drawn;
