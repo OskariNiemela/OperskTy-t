@@ -31,16 +31,9 @@ bool correct_size(string key){
 
 bool all_letters_present(string key){
     int length = static_cast<int>(key.length());
-    for(int a=0;a<length;a+=1){
-        bool stop = true;
-        for(char letter = 'a';letter<='z';++letter){
-            if(key[a]==letter){
-                stop = false;
-                break;
-            }
 
-        }
-        if(stop){
+    for(char letter ='a';letter<='z';++letter){
+        if(key.find(letter)==string::npos){
             return false;
         }
     }
