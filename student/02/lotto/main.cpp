@@ -44,7 +44,7 @@ int main()
     std::cin >> balls_total;
 
 
-    std::cout << "Enter the number of the balls drawn: ";
+    std::cout << "Enter the number of the drawn balls: ";
     std::cin >> balls_drawn;
 
 
