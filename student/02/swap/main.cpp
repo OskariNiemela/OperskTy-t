@@ -2,7 +2,7 @@
 #include <iostream>
 
 // TODO: Kirjoita funktion swap maarittely tahan
-void swap(int int1, int int2){
+void swap(int& int1, int& int2){
     int we = int1;
     int1 = int2;
     int2 = we;
