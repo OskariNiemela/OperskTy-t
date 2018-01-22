@@ -19,61 +19,25 @@ void Ruutu::laskeViereiset()
     if(not miina_)
     {
      //tarkista onko viereisissä ruuduissa miinoja
-        if(y_+1<=lauta_koko)
+        int lauta_koko = static_cast<int>(lauta_->size());
+        lauta_koko--;
+        int y= 0;
+        int x= 0;
+        int myarray[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
+        int coord[2] ={};
+        for(int i=0;i<8;i++)
         {
-            if(lauta_->at(y_+1).at(x_).onko_miina())
+            coord[0] = myarray[i][0];
+            coord[1] = myarray[i][1];
+            y=coord[0];
+            x=coord[1];
+            if((y_+y<=lauta_koko)&&(x_+x<=lauta_koko)&&(y_+y>=0)&&(x_+x>=0))
             {
-                miinoja_++;
-            }
-            if(x_+1<=lauta_koko){
-                if(lauta_->at(y_+1).at(x_+1).onko_miina())
-                {
-                    miinoja_++;
-                }
-
-            }
-            if(x_-1>=0)
-            {
-                if(lauta_->at(y_+1).at(x_-1).onko_miina())
-                {
-                    miinoja_++;
-                }
-            }
-        }
-        if(y_-1>=0)
-        {
-            if(lauta_->at(y_-1).at(x_).onko_miina())
-            {
-                miinoja_++;
-            }
-            if(x_+1<=lauta_koko)
-            {
-                if(lauta_->at(y_-1).at(x_+1).onko_miina())
+                if(lauta_->at(y_+y).at(x_+x).onko_miina())
                 {
                     miinoja_++;
                 }
             }
-            if(x_-1>=0)
-            {
-                if(lauta_->at(y_-1).at(x_-1).onko_miina())
-                {
-                    miinoja_++;
-                }
-            }
-        }
-        if(x_-1>=0)
-        {
-            if(lauta_->at(y_).at(x_-1).onko_miina())
-            {
-                miinoja_++;
-            }
-        }
-        if(x_+1<=lauta_koko)
-        {
-            if(lauta_->at(y_).at(x_+1).onko_miina()){
-                miinoja_++;
-            }
-
         }
 
     }
@@ -118,7 +82,7 @@ bool Ruutu::onko_miina()
 
 
 
-
+//Tulostaa oman ruudun kuvakkeen tällä hetkellä
 void Ruutu::tulosta(std::ostream& virta) const
 {
     if(avattu_){
@@ -133,5 +97,39 @@ void Ruutu::tulosta(std::ostream& virta) const
 
 bool Ruutu::avaa()
 {
-    return false;
+    if(not avattu_)
+    {
+        if(miina_){
+            avattu_ =true;
+            return false;
+        }else if(miinoja_==0){
+            avattu_ = true;
+            //jos miinoja ympärillä on nolla
+            //avataan viereiset ruudut
+            int lauta_koko = static_cast<int>(lauta_->size());
+            lauta_koko--;
+            int y= 0;
+            int x= 0;
+            int myarray[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
+            int coord[2] ={};
+            for(int i=0;i<8;i++)
+            {
+                coord[0] = myarray[i][0];
+                coord[1] = myarray[i][1];
+                y=coord[0];
+                x=coord[1];
+                if((y_+y<=lauta_koko)&&(x_+x<=lauta_koko)&&(y_+y>=0)&&(x_+x>=0))
+                {
+                    lauta_->at(y_+y).at(x_+x).avaa();
+                }
+            }
+            avattu_ = true;
+            return true;
+        }else{
+            avattu_ = true;
+            return true;
+        }
+    }else{
+        return true;
+    }
 }

@@ -18,6 +18,7 @@ class Ruutu
         void tulosta_debug(std::ostream &virta) const;
         bool avaa();
         bool onko_miina();
+
     private:
 
 
