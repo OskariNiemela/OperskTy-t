@@ -14,7 +14,69 @@ Ruutu::Ruutu(int x, int y, bool onkomiinaa, vector<vector<Ruutu>>* pelilauta)
 
 void Ruutu::laskeViereiset()
 {
+    int lauta_koko = static_cast<int>(lauta_->size());
+    lauta_koko--;
+    if(not miina_)
+    {
+     //tarkista onko viereisissä ruuduissa miinoja
+        if(y_+1<=lauta_koko)
+        {
+            if(lauta_->at(y_+1).at(x_).onko_miina())
+            {
+                miinoja_++;
+            }
+            if(x_+1<=lauta_koko){
+                if(lauta_->at(y_+1).at(x_+1).onko_miina())
+                {
+                    miinoja_++;
+                }
 
+            }
+            if(x_-1>=0)
+            {
+                if(lauta_->at(y_+1).at(x_-1).onko_miina())
+                {
+                    miinoja_++;
+                }
+            }
+        }
+        if(y_-1>=0)
+        {
+            if(lauta_->at(y_-1).at(x_).onko_miina())
+            {
+                miinoja_++;
+            }
+            if(x_+1<=lauta_koko)
+            {
+                if(lauta_->at(y_-1).at(x_+1).onko_miina())
+                {
+                    miinoja_++;
+                }
+            }
+            if(x_-1>=0)
+            {
+                if(lauta_->at(y_-1).at(x_-1).onko_miina())
+                {
+                    miinoja_++;
+                }
+            }
+        }
+        if(x_-1>=0)
+        {
+            if(lauta_->at(y_).at(x_-1).onko_miina())
+            {
+                miinoja_++;
+            }
+        }
+        if(x_+1<=lauta_koko)
+        {
+            if(lauta_->at(y_).at(x_+1).onko_miina()){
+                miinoja_++;
+            }
+
+        }
+
+    }
 }
 bool Ruutu::onkoValmis() const
 {
@@ -41,7 +103,7 @@ void Ruutu::tulosta_debug(std::ostream& virta) const
     if(miina_){
         virta<<'*';
     }else{
-        virta<<'.';
+        virta<<miinoja_;
     }
 }
 
@@ -60,8 +122,11 @@ bool Ruutu::onko_miina()
 void Ruutu::tulosta(std::ostream& virta) const
 {
     if(avattu_){
-        //virta<<miinoja_;
-    }else{
+        virta<<miinoja_;
+    }else if(lippu_){
+        virta<<'P';
+    }
+    else{
         virta<<'.';
     }
 }
