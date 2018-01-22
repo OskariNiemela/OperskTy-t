@@ -33,6 +33,31 @@ void tulostaLauta(std::vector< std::vector< Ruutu > >& lauta, std::ostream& virt
     }
 }
 
+void tulostaDebugLauta(std::vector< std::vector< Ruutu > >& lauta, std::ostream& virta)
+{
+    // Tulostetaa jokaisen merkin jälkeen välilyönti, jotta ASCII-grafiikka olisi selkeämpää katsoa.
+
+    // Tulostetaan laudan yläpuolelle X-akselin suuntaiset numerot
+    virta << "  ";
+    for(int x = 0; x < KOKO; ++x)
+    {
+        virta << (x+1) % 10 << ' ';  // Käytetään jakojäännöstä 10:n suhteen, jotta tuloste mahtuu vaikka lauta olisi suurempi kuin 10
+    }
+    virta << std::endl;
+
+
+    for(int y = 0; y < KOKO; ++y)
+    {
+        virta << (y+1) % 10 << ' ';
+        for(int x = 0; x < KOKO; ++x)
+        {
+            lauta.at(y).at(x).tulosta_debug(virta);
+            virta << " ";
+        }
+        virta << std::endl;
+    }
+}
+
 // Funktio alustaa pelilaudan käyttökuntoon, eli muodostaa ruutuoliot ja laskee niihin tarvitut tiedot
 void alustaLauta(std::vector< std::vector< Ruutu > >& lauta)
 {
@@ -115,6 +140,7 @@ int main()
     std::vector< std::vector< Ruutu > > lauta;
     alustaLauta(lauta);
     tulostaLauta(lauta, std::cout);
+    tulostaDebugLauta(lauta, std::cout);
 
     int x = 0;
     int y = 0;

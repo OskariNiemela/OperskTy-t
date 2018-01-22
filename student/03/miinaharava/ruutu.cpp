@@ -3,20 +3,25 @@
 #include <vector>
 Ruutu::Ruutu(int x, int y, bool onkomiinaa, vector<vector<Ruutu>>* pelilauta)
 {
-
-
+    miinoja_ = 0;
+    avattu_ = false;
+    lippu_ = false;
+    x_ = x;
+    y_ = y;
+    miina_ = onkomiinaa;
+    lauta_ = pelilauta;
 }
 
 void Ruutu::laskeViereiset()
 {
 
 }
-bool Ruutu::onkoValmis()
+bool Ruutu::onkoValmis() const
 {
     return false;
 }
 
-bool Ruutu::onkoLippu()
+bool Ruutu::onkoLippu() const
 {
     return false;
 }
@@ -29,11 +34,39 @@ void Ruutu::lisaaLippu()
 {
 
 }
-void Ruutu::tulosta(std::ostream& virta)
-{
 
+/*     --------Debug methods--------             */
+void Ruutu::tulosta_debug(std::ostream& virta) const
+{
+    if(miina_){
+        virta<<'*';
+    }else{
+        virta<<'.';
+    }
 }
 
-bool Ruutu::avaa(){
+/*-----------------------------------------------*/
+bool Ruutu::onko_miina()
+{
+    if (miina_){
+        return true;
+    }
+    return false;
+}
+
+
+
+
+void Ruutu::tulosta(std::ostream& virta) const
+{
+    if(avattu_){
+        //virta<<miinoja_;
+    }else{
+        virta<<'.';
+    }
+}
+
+bool Ruutu::avaa()
+{
     return false;
 }
