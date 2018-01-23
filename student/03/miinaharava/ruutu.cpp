@@ -12,10 +12,12 @@ Ruutu::Ruutu(int x, int y, bool onkomiinaa, vector<vector<Ruutu>>* pelilauta)
     lauta_ = pelilauta;
 }
 
+//Laskee viereisten ruutujen miinat ja laittaa määrän muistiin
 void Ruutu::laskeViereiset()
 {
     int lauta_koko = static_cast<int>(lauta_->size());
     lauta_koko--;
+    //tarkista jos ruudussa ei ole miinaa
     if(not miina_)
     {
      //tarkista onko viereisissä ruuduissa miinoja
@@ -42,23 +44,38 @@ void Ruutu::laskeViereiset()
 
     }
 }
+//Onko tämä ruutu "valmis", eli tarkistaa onko joko
+//1) ruudussa on miina ja lippu jolloin ruutu on valmis
+//2) ruudussa on lippu mutta ei miinaa, jolloin ruutu ei ole valmis
+//3) ruudussa on miina mutta ei lippua, jolloin ruutu ei ole valmis
+//muissa tapauksissa ruutu on valmis
 bool Ruutu::onkoValmis() const
 {
-    return false;
+    if((lippu_)&&(miina_))
+    {
+        return true;
+    }else if (lippu_){
+        return false;
+    }else if((miina_)&&(not lippu_))
+    {
+        return false;
+    }
+    return true;
 }
-
+//Kertoo onko oliolla lippu
 bool Ruutu::onkoLippu() const
 {
-    return false;
+    return lippu_;
 }
-
+//postaa lipun oliolta
 void Ruutu::poistaLippu()
 {
-
+    lippu_ = false;
 }
+//lisää ruutuun lipun
 void Ruutu::lisaaLippu()
 {
-
+    lippu_ = true;
 }
 
 /*     --------Debug methods--------             */
@@ -72,6 +89,8 @@ void Ruutu::tulosta_debug(std::ostream& virta) const
 }
 
 /*-----------------------------------------------*/
+//Kertoo onko ruudussa miina
+//kaytetaan ymparoivien miinojen laskuun
 bool Ruutu::onko_miina()
 {
     if (miina_){
@@ -95,6 +114,7 @@ void Ruutu::tulosta(std::ostream& virta) const
     }
 }
 
+//Avaa kyseisen ruudun, ja palauttaa arvoksi true jos ruudussa ei ollut pommia
 bool Ruutu::avaa()
 {
     if(not avattu_)
@@ -123,7 +143,6 @@ bool Ruutu::avaa()
                     lauta_->at(y_+y).at(x_+x).avaa();
                 }
             }
-            avattu_ = true;
             return true;
         }else{
             avattu_ = true;
