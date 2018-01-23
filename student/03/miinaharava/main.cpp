@@ -140,7 +140,6 @@ int main()
     std::vector< std::vector< Ruutu > > lauta;
     alustaLauta(lauta);
     tulostaLauta(lauta, std::cout);
-    tulostaDebugLauta(lauta, std::cout);
 
     int x = 0;
     int y = 0;

@@ -78,17 +78,6 @@ void Ruutu::lisaaLippu()
     lippu_ = true;
 }
 
-/*     --------Debug methods--------             */
-void Ruutu::tulosta_debug(std::ostream& virta) const
-{
-    if(miina_){
-        virta<<'*';
-    }else{
-        virta<<miinoja_;
-    }
-}
-
-/*-----------------------------------------------*/
 //Kertoo onko ruudussa miina
 //kaytetaan ymparoivien miinojen laskuun
 bool Ruutu::onko_miina()
@@ -98,7 +87,6 @@ bool Ruutu::onko_miina()
     }
     return false;
 }
-
 
 
 //Tulostaa oman ruudun kuvakkeen tällä hetkellä
