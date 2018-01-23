@@ -93,7 +93,12 @@ bool Ruutu::onko_miina()
 void Ruutu::tulosta(std::ostream& virta) const
 {
     if(avattu_){
-        virta<<miinoja_;
+        if (miina_){
+            virta<<'*';
+        }else{
+            virta<<miinoja_;
+        }
+
     }else if(lippu_){
         virta<<'P';
     }
