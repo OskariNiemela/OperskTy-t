@@ -1,3 +1,10 @@
+/*
+ TIE-02200 Ohjelmoinnin Peruskurssi
+
+ Oskari Niemelä 263440
+ Miinaharava projektin ruutu olion toteutus
+*/
+
 #include "ruutu.hh"
 #include <iostream>
 #include <vector>
@@ -25,12 +32,12 @@ void Ruutu::laskeViereiset()
         lauta_koko--;
         int y= 0;
         int x= 0;
-        int myarray[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
+        int coordinates[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
         int coord[2] ={};
         for(int i=0;i<8;i++)
         {
-            coord[0] = myarray[i][0];
-            coord[1] = myarray[i][1];
+            coord[0] = coordinates[i][0];
+            coord[1] = coordinates[i][1];
             y=coord[0];
             x=coord[1];
             if((y_+y<=lauta_koko)&&(x_+x<=lauta_koko)&&(y_+y>=0)&&(x_+x>=0))
@@ -123,12 +130,12 @@ bool Ruutu::avaa()
             lauta_koko--;
             int y= 0;
             int x= 0;
-            int myarray[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
+            int coordinates[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
             int coord[2] ={};
             for(int i=0;i<8;i++)
             {
-                coord[0] = myarray[i][0];
-                coord[1] = myarray[i][1];
+                coord[0] = coordinates[i][0];
+                coord[1] = coordinates[i][1];
                 y=coord[0];
                 x=coord[1];
                 if((y_+y<=lauta_koko)&&(x_+x<=lauta_koko)&&(y_+y>=0)&&(x_+x>=0))

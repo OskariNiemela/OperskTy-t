@@ -21,14 +21,25 @@ class Ruutu
 
     private:
 
-
+        //X ja Y koordinaatit
         int y_;
         int x_;
+
+        //Monta miinaa olion vierellä on
         int miinoja_;
+
+        //Onko olio liputettu
         bool lippu_;
+
+        //Onko oliossa miina
         bool miina_;
+
+        //Onko olio avattu
         bool avattu_;
+
+        //Osoitin pelilaudalle
         vector<vector<Ruutu>>* lauta_;
+
 
 };
 
