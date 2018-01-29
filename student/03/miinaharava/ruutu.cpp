@@ -32,6 +32,7 @@ void Ruutu::laskeViereiset()
         lauta_koko--;
         int y= 0;
         int x= 0;
+        //laitetaan tarvittavat koordinaatit arrayhin josta ne voidaan helposti käydä läpi
         int coordinates[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
         int coord[2] ={};
         for(int i=0;i<8;i++)
@@ -130,6 +131,7 @@ bool Ruutu::avaa()
             lauta_koko--;
             int y= 0;
             int x= 0;
+            //laitetaan tarvittavat koordinaatit arrayhin josta ne voidaan helposti käydä läpi
             int coordinates[8][2] = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,+1},{-1,0},{-1,-1}};
             int coord[2] ={};
             for(int i=0;i<8;i++)
