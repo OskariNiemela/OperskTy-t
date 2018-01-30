@@ -19,8 +19,14 @@ int main()
             return EXIT_SUCCESS;
         }
 
-        // TODO: toteuta ratkaisusi tähän
-	
+        int word_size = static_cast<int>(word_chars.size());
+
+        if( word_size > 1)
+        {
+            shuffle(word_chars.begin()+1,word_chars.end()-1,generator);
+        }
+        std::string s(word_chars.begin(),word_chars.end());
+        word = s;
         std::cout << word << std::endl;
     }
 }
