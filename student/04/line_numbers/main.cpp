@@ -2,12 +2,6 @@
 #include <fstream>
 #include <string>
 
-void print_line_numbers(std::string line)
-{
-
-}
-
-
 int main()
 {
     std::string write_file = "";
