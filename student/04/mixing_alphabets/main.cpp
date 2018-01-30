@@ -19,6 +19,7 @@ int main()
             return EXIT_SUCCESS;
         }
 
+        std::vector<char>  word_chars(word.begin(),word.end());
         int word_size = static_cast<int>(word_chars.size());
 
         if( word_size > 1)
