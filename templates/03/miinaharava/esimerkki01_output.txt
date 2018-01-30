@@ -1,0 +1,90 @@
+Syota siemenluku tai tyhja rivi: 4
+  1 2 3 4 5 6 
+1 . . . . . . 
+2 . . . . . . 
+3 . . . . . . 
+4 . . . . . . 
+5 . . . . . . 
+6 . . . . . . 
+x y> 6 1
+Haluatko laittaa lipun? (K/E) e
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 . . . . 1 0 
+3 . . . . 1 0 
+4 . . . . 2 2 
+5 . . . . . . 
+6 . . . . . . 
+x y> 1 4
+Haluatko laittaa lipun? (K/E) e
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 . . . . 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 . . 
+6 . 1 0 1 . . 
+x y> 1 6
+Haluatko laittaa lipun? (K/E) k
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 . . . . 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 . . 
+6 P 1 0 1 . . 
+x y> 4 2
+Haluatko laittaa lipun? (K/E) K
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 . . . P 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 . . 
+6 P 1 0 1 . . 
+x y> 3 2
+Haluatko laittaa lipun? (K/E) e
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 . . 1 P 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 . . 
+6 P 1 0 1 . . 
+x y> 2 2
+Haluatko laittaa lipun? (K/E) e
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 . 1 1 P 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 . . 
+6 P 1 0 1 . . 
+x y> 1 2 
+Haluatko laittaa lipun? (K/E) k
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 P 1 1 P 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 . . 
+6 P 1 0 1 . . 
+x y> 5 5
+Haluatko laittaa lipun? (K/E) k
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 P 1 1 P 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 P . 
+6 P 1 0 1 . . 
+x y> 6 5
+Haluatko laittaa lipun? (K/E) k
+  1 2 3 4 5 6 
+1 . . . . 1 0 
+2 P 1 1 P 1 0 
+3 1 1 1 1 1 0 
+4 0 0 0 1 2 2 
+5 1 1 0 1 P P 
+6 P 1 0 1 . . 
+Voitit, jee!
