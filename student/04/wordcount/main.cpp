@@ -63,14 +63,21 @@ int main()
         current_line++;
         words_vec = split(line);
         name = words_vec.begin();
+        std::vector<std::string> words_added;
 
         while(name!=words_vec.end())
         {
+
             if(scores.find(*name)!=scores.end())
             {
-                scores.at(*name) ++;
+                if(std::find(words_added.begin(), words_added.end(), *name) == words_added.end())
+                {
+                    words_added.push_back(*name);
+                    scores.at(*name) ++;
+                }
             }else
             {
+                words_added.push_back(*name);
                 scores.insert({*name,1});
             }
 
