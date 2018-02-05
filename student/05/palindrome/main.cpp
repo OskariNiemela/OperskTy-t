@@ -17,6 +17,10 @@ bool palindrome_recursive(std::string word_pal)
         {
             return true;
         }
+        else
+        {
+            return false;
+        }
     }else
     {
         return false;
