@@ -28,7 +28,7 @@ struct Fileline
     std::string location;
     std::string product;
     double price;
-    bool in_stock;
+    bool no_stock;
 };
 
 
@@ -36,7 +36,18 @@ struct Product
 {
     std::string product_name;
     double price;
+    std::string stock;
 };
+
+bool nonspace(std::string string)
+{
+    if(string.find_first_not_of(' ')!=std::string::npos)
+    {
+        return true;
+    }
+    return false;
+}
+
 
 //Compare product names in order to make the set the correct order
 bool operator<(Product const & a, Product const & b)
@@ -97,12 +108,13 @@ Fileline split(std::string user_string, char separator=';')
 
         if(is_double(user_string)){
             separated.price=std::stod(user_string);
+            separated.no_stock = false;
         }
         else
         {
-            if(str==nostock)
+            if(user_string==nostock)
             {
-                separated.in_stock = false;
+                separated.no_stock = true;
             }
             else{
                 separated.chain = " ";
@@ -111,6 +123,27 @@ Fileline split(std::string user_string, char separator=';')
         }
 
     return separated ;
+}
+
+void check_replace(std::set<Product> & set, Product item)
+{
+    std::set<Product>::iterator index;
+    index = set.begin();
+
+    while(index!=set.end())
+    {
+        Product metest = *index;
+        if(metest.product_name == item.product_name)
+        {
+            set.erase(metest);
+            break;
+        }
+        index++;
+
+    }
+
+    set.insert(item);
+
 }
 
 
@@ -131,12 +164,74 @@ int main()
     Fileline store_info;
     std::map<std::string,std::map<std::string,std::set<Product>>> storechains_map;
     std::string line;
+    Product produce;
+    std::set<std::string> all_products;
+    std::map<std::string,std::set<Product>>* chains_map;
+
+
     while(std::getline(file,line))
     {
         store_info = split(line);
-        std::cout<<store_info.chain<<store_info.location;
+
+        if(nonspace(store_info.chain)&&nonspace(store_info.location)&&nonspace(store_info.product)&&(store_info.no_stock||store_info.price>0))
+        {
+            all_products.insert(store_info.product);
+
+            if(storechains_map.find(store_info.chain)!=storechains_map.end())
+            {
+                if(storechains_map[store_info.chain].find(store_info.location)==storechains_map[store_info.chain].end())
+                {
+                    chains_map = & storechains_map[store_info.chain];
+
+                    produce.price = store_info.price;
+                    produce.product_name= store_info.product;
+                    produce.stock = not store_info.no_stock;
+
+                    std::set<Product> new_set;
+                    new_set.insert(produce);
+
+                    chains_map->insert({store_info.location,new_set});
+                }
+                else
+                {
+                    produce.price = store_info.price;
+                    produce.product_name= store_info.product;
+                    produce.stock = not store_info.no_stock;
+
+                    check_replace(storechains_map[store_info.chain][store_info.location],produce);
+                }
+
+
+            }
+            else
+            {
+
+                produce.price = store_info.price;
+                produce.product_name= store_info.product;
+                produce.stock = not store_info.no_stock;
+
+                std::map<std::string,std::set<Product>> new_map;
+                std::set<Product> new_set;
+                new_set.insert(produce);
+                new_map[store_info.location].insert(produce);
+
+
+                storechains_map.insert({store_info.chain,new_map});
+            }
+        }
+        else
+        {
+            std::cout<<"Error: the file has an erroneous line"<<std::endl;
+            return EXIT_FAILURE;
+        }
 
     }
+
+    while(true)
+    {
+        break;
+    }
+
     return EXIT_SUCCESS;
 }
 
