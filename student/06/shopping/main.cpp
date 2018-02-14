@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <fstream>
+#include <iomanip>
 
 const std::string nostock = "out-of-stock";
 
@@ -59,6 +60,13 @@ struct Fileline
     std::string product;
     double price;
     bool no_stock;
+};
+
+struct Cheapest
+{
+    int price;
+    std::set<std::string> locations;
+
 };
 
 
@@ -220,8 +228,6 @@ void print_selection(std::set<Product> & produce)
     std::set<Product>::iterator set_index;
     set_index = produce.begin();
 
-
-
     while(set_index!=produce.end())
     {
         Product metest = *set_index;
@@ -234,12 +240,81 @@ void print_selection(std::set<Product> & produce)
         }
         else
         {
-            std::cout<<"Product metest = *set_index;"<<std::endl;
+            std::cout<<"out of stock"<<std::endl;
         }
 
         set_index++;
     }
 }
+
+
+void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>> & chains)
+{
+    std::map<std::string,std::map<std::string,std::set<Product>>>::iterator chain;
+    std::map<std::string,std::set<Product>> ::iterator location;
+    std::set<Product>::iterator produce;
+    double cheapest_price = -1;
+    std::set<std::string> stores;
+    bool in_stock = false;
+
+    chain = chains.begin();
+
+    while(chain!=chains.end())
+    {
+        location = chain->second.begin();
+        while(location!=chain->second.end())
+        {
+            produce = location->second.begin();
+            while(produce!=location->second.end())
+            {
+               Product metest = *produce;
+
+               if(metest.stock)
+               {
+                   in_stock = true;
+
+                   if(metest.price<cheapest_price || cheapest_price< 0)
+                   {
+                       stores.clear();
+                       cheapest_price = metest.price;
+                       stores.insert(chain->first+' '+location->first);
+
+                   }
+                   else if(metest.price==cheapest_price)
+                   {
+                       stores.insert(chain->first+' '+location->first);
+                   }
+
+               }
+
+                produce++;
+            }
+
+           location++;
+        }
+
+        chain++;
+    }
+
+    std::cout<<std::setprecision(2)<<std::fixed<<cheapest_price<<std::endl;
+
+    if(not in_stock)
+    {
+        std::cout<<"The product is temporarily out of stock everywhere"<<std::endl;
+        return;
+    }
+
+
+
+    for(std::set<std::string>::iterator store = stores.begin(); store!=stores.end();store++)
+    {
+        std::cout<<*store<<std::endl;
+    }
+
+
+}
+
+
 
 int main()
 {
@@ -373,6 +448,8 @@ int main()
                 std::cout<<"Product is not part of product selection."<<std::endl;
                 continue;
             }
+
+            print_cheapest(storechains_map);
 
         }
         else if(command == "Products" || command == "products")
