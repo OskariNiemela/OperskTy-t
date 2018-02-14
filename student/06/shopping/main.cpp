@@ -7,6 +7,36 @@
 
 const std::string nostock = "out-of-stock";
 
+std::vector<std::string> split(std::string user_string, char separator,bool ignore_empty = false)
+{
+    std::size_t separator_index = user_string.find(separator);
+    std::vector<std::string> separated;
+    if(separator_index == std::string::npos)
+    {
+        separated.push_back(user_string);
+        return separated;
+    }
+
+    while(separator_index!=std::string::npos)
+    {
+        int substr_length = static_cast<int>(separator_index);
+        if(substr_length == 0){
+            if(not ignore_empty)
+            {
+                separated.push_back(user_string.substr(0,substr_length));
+            }
+        }else
+        {
+            separated.push_back(user_string.substr(0,substr_length));
+        }
+        substr_length++;
+        user_string.erase(0,substr_length);
+        separator_index = user_string.find(separator);
+
+    }
+    separated.push_back(user_string);
+    return separated ;
+}
 
 
 bool is_double(const std::string& s)
@@ -146,6 +176,18 @@ void check_replace(std::set<Product> & set, Product item)
 
 }
 
+void print_products(std::set<std::string> const & products)
+{
+    std::set<std::string>::iterator product_name;
+    product_name = products.begin();
+
+    while(product_name!=products.end())
+    {
+        std::cout<<*product_name<<std::endl;
+        product_name++;
+    }
+
+}
 
 int main()
 {
@@ -227,9 +269,74 @@ int main()
 
     }
 
-    while(true)
-    {
-        break;
+    while(true){
+        std::string line;
+        std::cout << "> ";
+        std::cin>>line;
+        std::vector<std::string> split_cmd = split(line, ' ', true);
+
+        std::string command = split_cmd.at(0);
+
+        if(command == "Selection" || command == "selection")
+        {
+            if(split_cmd.size() != 2){
+                std::cout << "Error: error in command selection";
+                continue;
+            }
+
+
+        }
+        else if(command == "Cheapest" || command == "cheapest")
+        {
+            if(split_cmd.size() != 2){
+                std::cout << "Error: error in comand cheapest"<<std::endl;
+                continue;
+            }
+            std::string cheap_product = split_cmd.at(1);
+
+            if(all_products.find(cheap_product)==all_products.end())
+            {
+                std::cout<<"Product is not part of product selection."<<std::endl;
+                continue;
+            }
+
+
+
+        }
+        else if(command == "Products" || command == "products")
+        {
+            if(split_cmd.size() != 1){
+                std::cout << "Error: error in command products";
+                continue;
+            }
+
+            print_products(all_products);
+
+        }
+        else if(command == "Chains" || command == "ćhains")
+        {
+            if(split_cmd.size() != 1){
+                std::cout << "Error: error in command chains";
+                continue;
+            }
+
+        }
+        else if(command == "Stores" || command == "stores")
+        {
+            if(split_cmd.size() != 2){
+                std::cout << "Error: error in command stores";
+                continue;
+            }
+
+        }
+        else if(command == "Quit" || command == "quit")
+        {
+           return EXIT_SUCCESS;
+        }
+        else
+        {
+            std::cout << "Error: unknown command"<<std::endl;
+        }
     }
 
     return EXIT_SUCCESS;
