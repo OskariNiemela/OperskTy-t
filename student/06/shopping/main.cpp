@@ -66,7 +66,7 @@ struct Product
 {
     std::string product_name;
     double price;
-    std::string stock;
+    bool stock;
 };
 
 bool nonspace(std::string string)
@@ -189,11 +189,64 @@ void print_products(std::set<std::string> const & products)
 
 }
 
+void print_chains(std::map<std::string,std::map<std::string,std::set<Product>>> & map)
+{
+    std::map<std::string,std::map<std::string,std::set<Product>>>::iterator map_index;
+    map_index = map.begin();
+
+    while(map_index!=map.end())
+    {
+        std::cout<<map_index->first<<std::endl;
+        map_index++;
+    }
+
+}
+
+void print_stores(std::map<std::string,std::set<Product>> & locations)
+{
+    std::map<std::string,std::set<Product>>::iterator map_index;
+    map_index = locations.begin();
+
+    while(map_index!=locations.end())
+    {
+        std::cout<<map_index->first<<std::endl;
+        map_index++;
+    }
+
+}
+
+void print_selection(std::set<Product> & produce)
+{
+    std::set<Product>::iterator set_index;
+    set_index = produce.begin();
+
+
+
+    while(set_index!=produce.end())
+    {
+        Product metest = *set_index;
+
+        std::cout<<metest.product_name<<' ';
+
+        if(metest.stock)
+        {
+            std::cout<<metest.price<<std::endl;
+        }
+        else
+        {
+            std::cout<<"Product metest = *set_index;"<<std::endl;
+        }
+
+        set_index++;
+    }
+}
+
 int main()
 {
     std::string file_path;
     std::cout<<"Input file: ";
-    std::cin>>file_path;
+    std::getline(std::cin,file_path);
+    //std::cin>>file_path;
 
     std::ifstream file(file_path);
 
@@ -269,20 +322,41 @@ int main()
 
     }
 
-    while(true){
+    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
+    while(true)
+    {
         std::string line;
         std::cout << "> ";
-        std::cin>>line;
+        std::getline(std::cin,line);
         std::vector<std::string> split_cmd = split(line, ' ', true);
 
         std::string command = split_cmd.at(0);
 
         if(command == "Selection" || command == "selection")
         {
-            if(split_cmd.size() != 2){
+            if(split_cmd.size() != 3){
                 std::cout << "Error: error in command selection";
                 continue;
             }
+            std::string chain = split_cmd.at(1);
+            std::string locale = split_cmd.at(2);
+
+            if(storechains_map.find(chain)==storechains_map.end())
+            {
+                std::cout<<"Error: an unknown chain"<<std::endl;
+                continue;
+            }
+
+
+            if(storechains_map[chain].find(locale)==storechains_map[chain].end())
+            {
+                std::cout<<"Error: an unknown location"<<std::endl;
+                continue;
+            }
+
+            print_selection(storechains_map[chain][locale]);
 
 
         }
@@ -300,33 +374,43 @@ int main()
                 continue;
             }
 
-
-
         }
         else if(command == "Products" || command == "products")
         {
             if(split_cmd.size() != 1){
-                std::cout << "Error: error in command products";
+                std::cout << "Error: error in command products"<<std::endl;
                 continue;
             }
 
             print_products(all_products);
 
         }
-        else if(command == "Chains" || command == "ćhains")
+        else if(command == "Chains" || command == "chains")
         {
             if(split_cmd.size() != 1){
-                std::cout << "Error: error in command chains";
+                std::cout << "Error: error in command chains"<<std::endl;
                 continue;
             }
+            print_chains(storechains_map);
 
         }
         else if(command == "Stores" || command == "stores")
         {
             if(split_cmd.size() != 2){
-                std::cout << "Error: error in command stores";
+                std::cout << "Error: error in command stores"<<std::endl;
                 continue;
             }
+            std::string chain = split_cmd.at(1);
+
+            if(storechains_map.find(chain)==storechains_map.end())
+            {
+                std::cout<<"Error: an unknown chain"<<std::endl;
+                continue;
+            }
+
+
+            print_stores(storechains_map[chain]);
+
 
         }
         else if(command == "Quit" || command == "quit")
