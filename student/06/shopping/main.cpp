@@ -457,7 +457,7 @@ int main()
 
             if(storechains_map[chain].find(locale)==storechains_map[chain].end())
             {
-                std::cout<<"Error: unknown location"<<std::endl;
+                std::cout<<"Error: unknown store"<<std::endl;
                 continue;
             }
 
