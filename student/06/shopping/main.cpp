@@ -234,6 +234,7 @@ void print_chains(std::map<std::string,std::map<std::string,std::set<Product>>> 
 
 }
 
+//Print all the stores
 void print_stores(std::map<std::string,std::set<Product>> & locations)
 {
     std::map<std::string,std::set<Product>>::iterator map_index;
@@ -247,6 +248,7 @@ void print_stores(std::map<std::string,std::set<Product>> & locations)
 
 }
 
+//Print the selection of a given store
 void print_selection(std::set<Product> & produce)
 {
     std::set<Product>::iterator set_index;
@@ -260,7 +262,7 @@ void print_selection(std::set<Product> & produce)
 
         if(metest.stock)
         {
-            std::cout<<metest.price<<std::endl;
+            std::cout<<std::setprecision(2)<<std::fixed<<metest.price<<std::endl;
         }
         else
         {
@@ -271,9 +273,10 @@ void print_selection(std::set<Product> & produce)
     }
 }
 
-
+//Print the cheapest product
 void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>> & chains, std::string item)
 {
+
     std::map<std::string,std::map<std::string,std::set<Product>>>::iterator chain;
     std::map<std::string,std::set<Product>> ::iterator location;
     std::set<Product>::iterator produce;
@@ -282,7 +285,9 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
     bool in_stock = false;
 
     chain = chains.begin();
-
+    /* The search loops through the whole structure containing
+     * all the chains, locations and products available
+     */
     while(chain!=chains.end())
     {
         location = chain->second.begin();
@@ -291,17 +296,24 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
             produce = location->second.begin();
             while(produce!=location->second.end())
             {
-               Product metest = *produce;
-               if(metest.stock && metest.product_name==item)
+               //For some reason that I dont get I need to
+               //first store the *produce into a new Product
+               //variable to be able to access the information within the struct.
+               Product item_struct = *produce;
+               if(item_struct.stock && item_struct.product_name==item)
                {
                    in_stock = true;
-                   if(metest.price<cheapest_price || cheapest_price< 0)
+                   //If there is no cheapest_price yet set (the default price is -1)
+                   //or if our price is the cheapest we've find so far.
+                   if(item_struct.price<cheapest_price || cheapest_price< 0)
                    {
+                       //Clear the stores set to delete the previous cheapest stores
                        stores.clear();
-                       cheapest_price = metest.price;
+                       cheapest_price = item_struct.price;
+                       //We store the store name by chain and location
                        stores.insert(chain->first+' '+location->first);
                    }
-                   else if(metest.price==cheapest_price)
+                   else if(item_struct.price==cheapest_price)
                    {
                        stores.insert(chain->first+' '+location->first);
                    }
@@ -319,11 +331,14 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
 
     if(not in_stock)
     {
-        std::cout<<"The product is temporarily out of stock everywhere"<<std::endl;
+        std::cout<<"The product is temporarily out of stock everywhere."<<std::endl;
         return;
     }
 
-    std::cout<<std::setprecision(2)<<std::fixed<<cheapest_price<<std::endl;
+    //setprecision is part of the iomanip library which allows to set the amount
+    //of decimals to be printed.
+    std::cout<<std::setprecision(2)<<std::fixed<<cheapest_price;
+    std::cout<<" euros"<<std::endl;
 
     for(std::set<std::string>::iterator store = stores.begin(); store!=stores.end();store++)
     {
@@ -353,21 +368,26 @@ int main()
     std::string line;
     Product produce;
     std::set<std::string> all_products;
-    std::map<std::string,std::set<Product>>* chains_map;
+    std::map<std::string,std::set<Product>>* chain_map;
+
 
     while(std::getline(file,line))
     {
         store_info = split(line);
 
+        //Checks that all went correctly when storing the info from the textfile
         if(nonspace(store_info.chain)&&nonspace(store_info.location)&&nonspace(store_info.product)&&(store_info.no_stock||store_info.price>0))
         {
+
             all_products.insert(store_info.product);
 
+            //Check where on the structure we should add the new
+            //information.
             if(storechains_map.find(store_info.chain)!=storechains_map.end())
             {
                 if(storechains_map[store_info.chain].find(store_info.location)==storechains_map[store_info.chain].end())
                 {
-                    chains_map = & storechains_map[store_info.chain];
+                    chain_map = & storechains_map[store_info.chain];
 
                     produce.price = store_info.price;
                     produce.product_name= store_info.product;
@@ -376,7 +396,7 @@ int main()
                     std::set<Product> new_set;
                     new_set.insert(produce);
 
-                    chains_map->insert({store_info.location,new_set});
+                    chain_map->insert({store_info.location,new_set});
                 }
                 else
                 {
@@ -431,13 +451,13 @@ int main()
 
             if(storechains_map.find(chain)==storechains_map.end())
             {
-                std::cout<<"Error: an unknown chain"<<std::endl;
+                std::cout<<"Error: unknown chain"<<std::endl;
                 continue;
             }
 
             if(storechains_map[chain].find(locale)==storechains_map[chain].end())
             {
-                std::cout<<"Error: an unknown location"<<std::endl;
+                std::cout<<"Error: unknown location"<<std::endl;
                 continue;
             }
 
@@ -446,7 +466,7 @@ int main()
         else if(command == "Cheapest" || command == "cheapest")
         {
             if(split_cmd.size() != 2){
-                std::cout << "Error: error in comand cheapest"<<std::endl;
+                std::cout << "Error: error in command cheapest"<<std::endl;
                 continue;
             }
             std::string cheap_product = split_cmd.at(1);
