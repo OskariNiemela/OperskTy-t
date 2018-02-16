@@ -8,18 +8,26 @@
 
 const std::string nostock = "out-of-stock";
 
-std::vector<std::string> split(std::string user_string, char separator,bool ignore_empty = false)
+
+//Split a string at the separator characters and store it in a vector
+std::vector<std::string> split_vec(std::string user_string, char separator,bool ignore_empty = false)
 {
     std::size_t separator_index = user_string.find(separator);
     std::vector<std::string> separated;
+
+    //If the string has no seperator characters then we just return the original string in a vector
     if(separator_index == std::string::npos)
     {
         separated.push_back(user_string);
         return separated;
     }
 
+    // Iterate through the string, find all the separator characters and add the substr from 0 to
+    // the index of the separator char index, then delete the substr from the string.
     while(separator_index!=std::string::npos)
     {
+        //the separator index returns a string::size_type, which is an unsigned integer
+        //so to not get a warning we static cast it into an int.
         int substr_length = static_cast<int>(separator_index);
         if(substr_length == 0){
             if(not ignore_empty)
@@ -30,16 +38,17 @@ std::vector<std::string> split(std::string user_string, char separator,bool igno
         {
             separated.push_back(user_string.substr(0,substr_length));
         }
+        //since the erase function excludes the last index that it is given we need to add one to
+        //the substr length to delete the separator character
         substr_length++;
         user_string.erase(0,substr_length);
         separator_index = user_string.find(separator);
-
     }
     separated.push_back(user_string);
     return separated ;
 }
 
-
+//Check if the given string is a double
 bool is_double(const std::string& s)
 {
     try
@@ -53,6 +62,7 @@ bool is_double(const std::string& s)
     return true;
 }
 
+//When we parse through the text file we save all the relevant info into this type of structure.
 struct Fileline
 {
     std::string chain;
@@ -62,14 +72,7 @@ struct Fileline
     bool no_stock;
 };
 
-struct Cheapest
-{
-    int price;
-    std::set<std::string> locations;
-
-};
-
-
+//We save all the relevant information about a given product in a store into a struct of this type.
 struct Product
 {
     std::string product_name;
@@ -77,6 +80,7 @@ struct Product
     bool stock;
 };
 
+//Check if the string has nonspace characters in it
 bool nonspace(std::string string)
 {
     if(string.find_first_not_of(' ')!=std::string::npos)
@@ -86,18 +90,21 @@ bool nonspace(std::string string)
     return false;
 }
 
-
 //Compare product names in order to make the set the correct order
+//needed to save Product types into sets.
 bool operator<(Product const & a, Product const & b)
 {
     return a.product_name < b.product_name;
-
 }
 
+//Split the information on a text line and store it into
+//a Fileline structure.
 Fileline split(std::string user_string, char separator=';')
 {
     std::size_t separator_index = user_string.find(separator);
     std::string str;
+
+    //Initialize the fileline structure.
     Fileline separated{" "," "," ",-1.0,false};
     if(separator_index == std::string::npos)
     {
@@ -105,18 +112,26 @@ Fileline split(std::string user_string, char separator=';')
     }
 
     int loops = 0;
+
     while(separator_index!=std::string::npos)
     {
         int substr_length = static_cast<int>(separator_index);
 
-
+        //If the substring has a length of 0 then we have
+        //a faulty line in the textfile so we return
+        //it with an empty space so the main loop recognizes
+        //that something went wrong.
         if(substr_length == 0){
+            separated.chain = " ";
             return separated;
         }else
         {
 
             switch(loops)
             {
+            //Every line should have chain,location and product so if
+            //there is more separator characters after the product name
+            //then the line is faulty.
                 case 0:
                     str = user_string.substr(0,substr_length);
                     separated.chain = str;
@@ -144,12 +159,15 @@ Fileline split(std::string user_string, char separator=';')
         loops++;
     }
 
+    //Lastly we check the price of the item
         if(is_double(user_string)){
             separated.price=std::stod(user_string);
             separated.no_stock = false;
         }
         else
         {
+            //If the last value is not a double, we check it its out-of-stock
+            //it its not that either the text line if faulty.
             if(user_string==nostock)
             {
                 separated.no_stock = true;
@@ -163,6 +181,9 @@ Fileline split(std::string user_string, char separator=';')
     return separated ;
 }
 
+//check if the given Product is in the given set if it
+//is, then we replace it if its not then we just add the item
+//to the set.
 void check_replace(std::set<Product> & set, Product item)
 {
     std::set<Product>::iterator index;
@@ -184,6 +205,8 @@ void check_replace(std::set<Product> & set, Product item)
 
 }
 
+
+//print the products that are sold in the stores
 void print_products(std::set<std::string> const & products)
 {
     std::set<std::string>::iterator product_name;
@@ -197,6 +220,7 @@ void print_products(std::set<std::string> const & products)
 
 }
 
+//Print all the available store chains.
 void print_chains(std::map<std::string,std::map<std::string,std::set<Product>>> & map)
 {
     std::map<std::string,std::map<std::string,std::set<Product>>>::iterator map_index;
@@ -248,7 +272,7 @@ void print_selection(std::set<Product> & produce)
 }
 
 
-void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>> & chains)
+void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>> & chains, std::string item)
 {
     std::map<std::string,std::map<std::string,std::set<Product>>>::iterator chain;
     std::map<std::string,std::set<Product>> ::iterator location;
@@ -268,17 +292,14 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
             while(produce!=location->second.end())
             {
                Product metest = *produce;
-
-               if(metest.stock)
+               if(metest.stock && metest.product_name==item)
                {
                    in_stock = true;
-
                    if(metest.price<cheapest_price || cheapest_price< 0)
                    {
                        stores.clear();
                        cheapest_price = metest.price;
                        stores.insert(chain->first+' '+location->first);
-
                    }
                    else if(metest.price==cheapest_price)
                    {
@@ -296,15 +317,13 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
         chain++;
     }
 
-    std::cout<<std::setprecision(2)<<std::fixed<<cheapest_price<<std::endl;
-
     if(not in_stock)
     {
         std::cout<<"The product is temporarily out of stock everywhere"<<std::endl;
         return;
     }
 
-
+    std::cout<<std::setprecision(2)<<std::fixed<<cheapest_price<<std::endl;
 
     for(std::set<std::string>::iterator store = stores.begin(); store!=stores.end();store++)
     {
@@ -321,8 +340,6 @@ int main()
     std::string file_path;
     std::cout<<"Input file: ";
     std::getline(std::cin,file_path);
-    //std::cin>>file_path;
-
     std::ifstream file(file_path);
 
     if (not file)
@@ -337,7 +354,6 @@ int main()
     Product produce;
     std::set<std::string> all_products;
     std::map<std::string,std::set<Product>>* chains_map;
-
 
     while(std::getline(file,line))
     {
@@ -370,8 +386,6 @@ int main()
 
                     check_replace(storechains_map[store_info.chain][store_info.location],produce);
                 }
-
-
             }
             else
             {
@@ -397,22 +411,19 @@ int main()
 
     }
 
-    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-
     while(true)
     {
         std::string line;
         std::cout << "> ";
         std::getline(std::cin,line);
-        std::vector<std::string> split_cmd = split(line, ' ', true);
+        std::vector<std::string> split_cmd = split_vec(line, ' ', true);
 
         std::string command = split_cmd.at(0);
 
         if(command == "Selection" || command == "selection")
         {
             if(split_cmd.size() != 3){
-                std::cout << "Error: error in command selection";
+                std::cout << "Error: error in command selection"<<std::endl;
                 continue;
             }
             std::string chain = split_cmd.at(1);
@@ -424,7 +435,6 @@ int main()
                 continue;
             }
 
-
             if(storechains_map[chain].find(locale)==storechains_map[chain].end())
             {
                 std::cout<<"Error: an unknown location"<<std::endl;
@@ -432,8 +442,6 @@ int main()
             }
 
             print_selection(storechains_map[chain][locale]);
-
-
         }
         else if(command == "Cheapest" || command == "cheapest")
         {
@@ -448,8 +456,7 @@ int main()
                 std::cout<<"Product is not part of product selection."<<std::endl;
                 continue;
             }
-
-            print_cheapest(storechains_map);
+            print_cheapest(storechains_map, cheap_product);
 
         }
         else if(command == "Products" || command == "products")
@@ -458,9 +465,7 @@ int main()
                 std::cout << "Error: error in command products"<<std::endl;
                 continue;
             }
-
             print_products(all_products);
-
         }
         else if(command == "Chains" || command == "chains")
         {
@@ -484,11 +489,7 @@ int main()
                 std::cout<<"Error: an unknown chain"<<std::endl;
                 continue;
             }
-
-
             print_stores(storechains_map[chain]);
-
-
         }
         else if(command == "Quit" || command == "quit")
         {
