@@ -77,7 +77,6 @@ struct Product
 {
     std::string product_name;
     double price;
-    bool stock;
 };
 
 //Check if the string has nonspace characters in it
@@ -171,6 +170,7 @@ Fileline split(std::string user_string, char separator=';')
             if(user_string==nostock)
             {
                 separated.no_stock = true;
+                separated.price = -1;
             }
             else{
                 separated.chain = " ";
@@ -260,7 +260,7 @@ void print_selection(std::set<Product> & produce)
 
         std::cout<<metest.product_name<<' ';
 
-        if(metest.stock)
+        if(metest.price>0)
         {
             std::cout<<std::setprecision(2)<<std::fixed<<metest.price<<std::endl;
         }
@@ -300,7 +300,7 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
                //first store the *produce into a new Product
                //variable to be able to access the information within the struct.
                Product item_struct = *produce;
-               if(item_struct.stock && item_struct.product_name==item)
+               if(item_struct.price>0 && item_struct.product_name==item)
                {
                    in_stock = true;
                    //If there is no cheapest_price yet set (the default price is -1)
@@ -391,7 +391,6 @@ int main()
 
                     produce.price = store_info.price;
                     produce.product_name= store_info.product;
-                    produce.stock = not store_info.no_stock;
 
                     std::set<Product> new_set;
                     new_set.insert(produce);
@@ -402,7 +401,6 @@ int main()
                 {
                     produce.price = store_info.price;
                     produce.product_name= store_info.product;
-                    produce.stock = not store_info.no_stock;
 
                     check_replace(storechains_map[store_info.chain][store_info.location],produce);
                 }
@@ -412,7 +410,6 @@ int main()
 
                 produce.price = store_info.price;
                 produce.product_name= store_info.product;
-                produce.stock = not store_info.no_stock;
 
                 std::map<std::string,std::set<Product>> new_map;
                 std::set<Product> new_set;
