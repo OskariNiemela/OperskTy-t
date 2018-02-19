@@ -8,7 +8,6 @@
 
 const std::string nostock = "out-of-stock";
 
-
 //Split a string at the separator characters and store it in a vector
 std::vector<std::string> split_vec(std::string user_string, char separator,bool ignore_empty = false)
 {
@@ -63,6 +62,8 @@ bool is_double(const std::string& s)
 }
 
 //When we parse through the text file we save all the relevant info into this type of structure.
+//The idea was that it would make the code a bit easier to read/parse, but it just made the whole
+//thing a bit of a mess, but its done so im keeping it.
 struct Fileline
 {
     std::string chain;
@@ -200,9 +201,7 @@ void check_replace(std::set<Product> & set, Product item)
         index++;
 
     }
-
     set.insert(item);
-
 }
 
 
@@ -217,7 +216,6 @@ void print_products(std::set<std::string> const & products)
         std::cout<<*product_name<<std::endl;
         product_name++;
     }
-
 }
 
 //Print all the available store chains.
@@ -273,10 +271,9 @@ void print_selection(std::set<Product> & produce)
     }
 }
 
-//Print the cheapest product
+//Print the cheapest product by going through the main data structure
 void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>> & chains, std::string item)
 {
-
     std::map<std::string,std::map<std::string,std::set<Product>>>::iterator chain;
     std::map<std::string,std::set<Product>> ::iterator location;
     std::set<Product>::iterator produce;
@@ -363,14 +360,19 @@ int main()
         return EXIT_FAILURE;
     }
 
+    //We'll store information about a particular store in this
+    //before adding it to the main structure
     Fileline store_info;
+
+    //The main data structure we're using
     std::map<std::string,std::map<std::string,std::set<Product>>> storechains_map;
     std::string line;
     Product produce;
+    //Store all the product names in this set
     std::set<std::string> all_products;
     std::map<std::string,std::set<Product>>* chain_map;
 
-
+    //Store the product information in the appropriate data structure.
     while(std::getline(file,line))
     {
         store_info = split(line);
@@ -385,6 +387,7 @@ int main()
             //information.
             if(storechains_map.find(store_info.chain)!=storechains_map.end())
             {
+                //New location, but we already know the chain
                 if(storechains_map[store_info.chain].find(store_info.location)==storechains_map[store_info.chain].end())
                 {
                     chain_map = & storechains_map[store_info.chain];
@@ -397,6 +400,7 @@ int main()
 
                     chain_map->insert({store_info.location,new_set});
                 }
+                //New product in a known store
                 else
                 {
                     produce.price = store_info.price;
@@ -405,6 +409,7 @@ int main()
                     check_replace(storechains_map[store_info.chain][store_info.location],produce);
                 }
             }
+            //The chain hasnt been stored in our data yet
             else
             {
 
