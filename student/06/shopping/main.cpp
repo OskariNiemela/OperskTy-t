@@ -217,7 +217,7 @@ void print_cheapest(std::map<std::string,std::map<std::string,std::set<Product>>
                {
                    in_stock = true;
                    //If there is no cheapest_price yet set (the default price is -1)
-                   //or if our price is the cheapest we've find so far.
+                   //or if our price is the cheapest we've found so far.
                    if(item_struct.price<cheapest_price || cheapest_price< 0)
                    {
                        //Clear the stores set to delete the previous cheapest stores
