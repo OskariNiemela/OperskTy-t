@@ -106,7 +106,7 @@ int main()
                 }
             }
 
-        // Tulostetaan järjestettynä opiskelijanumeroiden mukaisesti suuruusjärjestykseen
+            // Tulostetaan järjestettynä opiskelijanumeroiden mukaisesti suuruusjärjestykseen
         } else if(komento == "N" or komento == "n"){
             if(osat.size() != 1){
                 std::cout << "Virheelliset parametrit!" << std::endl << HELP_TEXT;
@@ -117,7 +117,7 @@ int main()
                 }
             }
 
-        // Muokataan opiskelijan tietoja
+            // Muokataan opiskelijan tietoja
         } else if(komento == "M" or komento == "m"){
             if(osat.size() != 2){
                 std::cout << "Virheelliset parametrit!" << std::endl << HELP_TEXT;
@@ -128,20 +128,20 @@ int main()
             // TODO: Lisää toiminnallisuus tähän.
 
         } else if(komento == "Q" or komento == "q"){
-           return EXIT_SUCCESS;
+            // Tietorakenteen tuhoaminen: nollataan osoittimet ja vapautetaan muisti
+            for(auto pari: opiskelijanumerot) {
+                pari.second = nullptr;
+            }
+
+            for(auto pari: kayttajatunnukset) {
+                delete pari.second;
+                pari.second = nullptr;
+            }
+
+            return EXIT_SUCCESS;
         } else {
             std::cout << "Virheellinen komento!" << std::endl << HELP_TEXT;
         }
-    }
-
-    // Tietorakenteen tuhoaminen: nollataan osoittimet ja vapautetaan muisti
-    for(auto pari: opiskelijanumerot) {
-        pari.second = nullptr;
-    }
-
-    for(auto pari: kayttajatunnukset) {
-        delete pari.second;
-        pari.second = nullptr;
     }
 }
 
