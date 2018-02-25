@@ -20,7 +20,7 @@ void Cards::print_from_top_to_bottom(std::ostream &s)
 {
     if(top_ != nullptr)
     {
-        int order = 0;
+        int order = 1;
         Card_data* print_card = top_;
         while(print_card!= nullptr)
         {
