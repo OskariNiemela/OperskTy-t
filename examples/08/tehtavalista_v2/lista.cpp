@@ -10,7 +10,8 @@ Lista::Lista(): ensimmaisen_osoite_(nullptr),
 }
 
 void Lista::lisaa_alkio_loppuun(const string& lisattava_tehtava) {
-    shared_ptr<Listan_alkio> uuden_osoite(make_shared<Listan_alkio>{lisattava_tehtava, nullptr});
+    shared_ptr<Listan_alkio> uuden_osoite
+            = make_shared<Listan_alkio>(Listan_alkio{lisattava_tehtava, nullptr});
 
     if ( onko_tyhja() ) {
         ensimmaisen_osoite_ = uuden_osoite;
