@@ -106,8 +106,6 @@ int main() {
             *str_char = toupper(*str_char);
         }
 
-
-
         Funktio lasku = nullptr;
         bool komento_loytyi = false;
 

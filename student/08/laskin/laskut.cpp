@@ -1,5 +1,6 @@
 // Huomaa, ei tarvetta using namespace std:lle, koska tässä
 // tiedostossa ei käytetä mitään C++:n valmiskirjastoja.
+#include <math.h>
 
 double yhteen(double vasen, double oikea) {
     return vasen + oikea;
@@ -15,17 +16,11 @@ double kerto(double vasen, double oikea) {
     return vasen * oikea;
 }
 
-
 double jako(double vasen, double oikea) {
     return vasen / oikea;
 }
 
 double potenssi(double vasen, double oikea)
 {
-   double ans = 1;
-   for(double i=0;i<oikea;i++)
-   {
-       ans = ans*vasen;
-   }
-   return ans;
+   return pow(vasen,oikea);
 }
