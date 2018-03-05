@@ -127,7 +127,7 @@ int main() {
             continue;
         }
 
-        if(lasku == nullptr)
+        if(lasku == nullptr && palat.size()==1)
         {
             std::cout<<LOPPUTERVEHDYS<<std::endl;
             return EXIT_SUCCESS;
