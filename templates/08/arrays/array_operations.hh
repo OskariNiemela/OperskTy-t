@@ -26,7 +26,7 @@ void kopioi(int* alkioptr, int* loppuptr, int* kohdeptr);
 
 /* Kääntää taulukon osan alkiot takaperin
  * int* vasenptr: pointteri käännettävän osan ensimmäiseen alkioon
- * int* oikeaptr: pointteri käännettävän osan viimeiseen alkioon
+ * int* oikeaptr: pointteri käännettävän osan viimeistä seuraavaan muistiosoitteeseen
  */
 void kaanna_takaperin(int* vasenptr, int* oikeaptr);
 
