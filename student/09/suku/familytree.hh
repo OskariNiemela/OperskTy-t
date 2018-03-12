@@ -38,7 +38,7 @@ struct Person
 
 // <REMOVE FROM TEMPLATE>
 //------------------------
-using Personmap = std::map<std::string, std::shared_ptr<Person> >;
+using Personmap = std::map<std::string, Person*>;
 //------------------------
 // </REMOVE FROM TEMPLATE>
 
