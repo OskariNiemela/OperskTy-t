@@ -201,25 +201,15 @@ private:
                     const IdSet& container, std::ostream& output) const;
 
 
+    void get_recursive_level_up(int levels, Person* guy, std::vector<Person *> &people) const;
+    void get_recursive_level_down(int levels, Person* guy, std::vector<Person *> &people) const;
 
-    // <REMOVE FROM TEMPLATE>
-    //------------------------
-    void personsOnLevel(Person* const person,
-                        IdSet &container,
-                        const bool direction_child,
-                        const int& n
-                        ) const;
+    void print_people(std::vector<Person*> people, std::ostream &output) const;
 
-    void printGrand(Person* const person, const int& n,
-                    const bool& dir_c, std::ostream&
-                    output = std::cout) const;
-    void printTallestOrShortest(Person* const person,
-                                const bool& tallest,
-                                std::ostream& output = std::cout) const;
-    Person*  heightRecursive(Person* const person,
-                             const bool& tallest) const;
-    //------------------------
-    // </REMOVE FROM TEMPLATE>
+    void delete_vec_value(Person *value, std::vector<Person *> &people) const;
+
+    bool is_name_in(Person *value,std::vector<Person*>&people)const;
+
 };
 
 #endif // FAMILYTREE_H
