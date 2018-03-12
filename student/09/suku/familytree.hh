@@ -184,6 +184,8 @@ private:
      * to make things easier and to avoid "copy-paste-coding"
      */
 
+    void get_children(const Person *person, std::set<std::string> &children) const;
+
     // Return a pointer for ID.
     Person* getPointer(const std::string& id) const;
 

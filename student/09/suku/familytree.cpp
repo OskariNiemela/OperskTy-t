@@ -31,7 +31,14 @@ void Familytree::addNewPerson(const std::string &id, const int &height, std::ost
 
 void Familytree::printPersons(std::ostream &output) const
 {
+    std::map<std::string,Person*>::const_iterator people;
+    people = data_.begin();
 
+    while(people!=data_.end())
+    {
+        output<<people->first<<", "<<people->second->height_<<std::endl;
+        people++;
+    }
 }
 
 void Familytree::addRelation(const std::string &child, const std::vector<std::string> &parents, std::ostream &output)
@@ -55,21 +62,58 @@ void Familytree::addRelation(const std::string &child, const std::vector<std::st
         mother_ptr= relations->second;
     }
 
+    child_ptr->parents_.at(0) = father_ptr;
+
     if(father_ptr!=nullptr)
     {
-        child_ptr->parents_.at(0) = father_ptr;
+
         father_ptr->children_.push_back(child_ptr);
     }
 
+    child_ptr->parents_.at(1) = mother_ptr;
     if(mother_ptr!=nullptr)
     {
-        child_ptr->parents_.at(1) = mother_ptr;
+
         mother_ptr->children_.push_back(child_ptr);
     }
+
+    output<<"What am i supposed to put here ?"<<std::endl;
 }
 
 void Familytree::printChildren(const std::string &id, std::ostream &output) const
 {
+    Person* person_point;
+    try
+    {
+        person_point = data_.at(id);
+    }
+    catch(std::out_of_range)
+    {
+        output<<"Error. id not found";
+        return;
+    }
+
+
+    std::set<std::string> children_names;
+
+    get_children(person_point,children_names);
+
+
+    if(children_names.size()>0)
+    {
+        std::set<std::string>::iterator child;
+        child = children_names.begin();
+
+        while(child!=children_names.end())
+        {
+            output<<*child<<std::endl;
+            child++;
+        }
+    }
+    else
+    {
+        output<<"Error. "<<id<<" has no children"<<std::endl;
+    }
 
 }
 
@@ -106,6 +150,20 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
 void Familytree::printGrandParentsN(const std::string &id, const int n, std::ostream &output) const
 {
 
+}
+
+void Familytree::get_children(const Person* person, std::set<std::string> &children) const
+{
+    std::vector<Person*>::const_iterator child_it;
+    child_it = person->children_.begin();
+    Person const *waht;
+    while(child_it!=person->children_.end())
+    {
+        waht = *child_it;
+        children.insert(waht->id_);
+
+        child_it++;
+    }
 }
 
 
