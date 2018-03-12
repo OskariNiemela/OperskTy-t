@@ -17,7 +17,7 @@ bool lueKomento(int& x, int& y)
         }
 
         // Jos saadaan luettua kelvolliset koordinaatit, toiminta jatkuu
-        if(0 < x and x < KOKO and 0 < y and y < KOKO){
+        if(0 < x and x <= KOKO and 0 < y and y <= KOKO){
             return true;
         }
 
