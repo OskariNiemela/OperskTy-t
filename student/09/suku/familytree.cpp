@@ -119,11 +119,66 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
 
 void Familytree::printParents(const std::string &id, std::ostream &output) const
 {
+    Person* person_point;
+    try
+    {
+        person_point = data_.at(id);
+    }
+    catch(std::out_of_range)
+    {
+        output<<"Error. id not found";
+        return;
+    }
+    std::vector<Person*>::const_iterator parents = person_point->parents_.begin();
+    Person const *waht;
 
+    while(parents!=person_point->parents_.end())
+    {
+        waht = *parents;
+        if(waht!=nullptr)
+        {
+            output<<waht->id_<<std::endl;
+        }
+        parents++;
+    }
 }
 
 void Familytree::printSiblings(const std::string &id, std::ostream &output) const
 {
+    Person* person_point;
+    try
+    {
+        person_point = data_.at(id);
+    }
+    catch(std::out_of_range)
+    {
+        output<<"Error. id not found";
+        return;
+    }
+    std::vector<Person*>::const_iterator parents = person_point->parents_.begin();
+    Person const *waht;
+    std::set<std::string> sibling;
+
+    while(parents!=person_point->parents_.end())
+    {
+        waht = *parents;
+        if(waht!=nullptr)
+        {
+            get_children(waht,sibling);
+        }
+        parents++;
+    }
+
+    std::set<std::string>::iterator set_it;
+    sibling.erase(id);
+    set_it = sibling.begin();
+
+    while(set_it!=sibling.end())
+    {
+        output<<*set_it<<std::endl;
+        set_it++;
+    }
+
 
 }
 
