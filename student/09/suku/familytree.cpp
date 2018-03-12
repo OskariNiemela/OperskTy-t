@@ -7,7 +7,10 @@ Familytree::Familytree()
 
 Familytree::~Familytree()
 {
-
+    for(std::map<std::string,Person*>::iterator people = data_.begin();people!=data_.end();people++)
+    {
+        delete people->second;
+    }
 }
 
 bool operator<(const Person& a, const Person& b)
@@ -95,7 +98,7 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
         return;
     }
 
-    std::vector<Person*> children_names;
+    std::set<Person*> children_names;
 
     get_recursive_level_down(0,person_point,children_names);
 
@@ -139,7 +142,7 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
 {
     Person* person_point = getPointer(id);
 
-    std::vector<Person*> parents;
+    std::set<Person*> parents;
 
     if(!person_point)
     {
@@ -151,14 +154,13 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
 
     get_recursive_level_up(0,person_point,parents);
 
-    std::vector<Person*> sibling;
+    std::set<Person*> sibling;
 
-    for(std::vector<Person*>::iterator parent = parents.begin();parent!=parents.end();parent++)
+    for(std::set<Person*>::iterator parent = parents.begin();parent!=parents.end();parent++)
     {
         get_recursive_level_down(0,*parent,sibling);
     }
 
-    delete_vec_value(person_point,sibling);
 
     print_people(sibling,output);
 
@@ -167,9 +169,9 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
 
 void Familytree::printCousins(const std::string &id, std::ostream &output) const
 {
-    std::vector<Person*> Granma;
-    std::vector<Person*> ParentsSiblings;
-    std::set<Person*>Parentssib;
+    std::set<Person*> Granma;
+    std::set<Person*> ParentsSiblings;
+
 
     Person* person_point = getPointer(id);
 
@@ -183,30 +185,25 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     get_recursive_level_up(1,person_point,Granma);
 
     //Get grandparents's kids
-    for(std::vector<Person*>::iterator parent = Granma.begin();parent!=Granma.end();parent++)
+    for(std::set<Person*>::iterator parent = Granma.begin();parent!=Granma.end();parent++)
     {
         get_recursive_level_down(0,*parent,ParentsSiblings);
-    }
-
-    for(std::vector<Person*>::iterator parentsibling = ParentsSiblings.begin();parentsibling!=ParentsSiblings.end();parentsibling++)
-    {
-        Parentssib.insert(*parentsibling);
     }
 
 
     if(person_point->parents_.at(0)!=nullptr)
     {
-        Parentssib.erase(person_point->parents_.at(0));
+        ParentsSiblings.erase(person_point->parents_.at(0));
     }
     if(person_point->parents_.at(1)!=nullptr)
     {
-        Parentssib.erase(person_point->parents_.at(1));
+        ParentsSiblings.erase(person_point->parents_.at(1));
     }
 
-    std::vector<Person*> cousins;
+    std::set<Person*> cousins;
 
     //Get parents siblings kids
-    for(std::set<Person*>::iterator parentsibling = Parentssib.begin();parentsibling!=Parentssib.end();parentsibling++)
+    for(std::set<Person*>::iterator parentsibling = ParentsSiblings.begin();parentsibling!=ParentsSiblings.end();parentsibling++)
     {
         get_recursive_level_down(0,*parentsibling,cousins);
     }
@@ -229,7 +226,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
 {
 
     Person* person_point = getPointer(id);
-    std::vector<Person*> grandDad;
+    std::set<Person*> grandDad;
 
     if(n>0)
     {
@@ -242,7 +239,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
 void Familytree::printGrandParentsN(const std::string &id, const int n, std::ostream &output) const
 {
     Person* person_point = getPointer(id);
-    std::vector<Person*> grandDad;
+    std::set<Person*> grandDad;
 
     if(n>0)
     {
@@ -267,7 +264,7 @@ Person *Familytree::getPointer(const std::string &id) const
 }
 
 
-void Familytree::get_recursive_level_up(int levels, Person* guy, std::vector<Person *> &people) const
+void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const
 {
     if(guy!=nullptr)
     {
@@ -275,11 +272,11 @@ void Familytree::get_recursive_level_up(int levels, Person* guy, std::vector<Per
         {
             if(guy->parents_.at(0)!=nullptr)
             {
-                people.push_back(guy->parents_.at(0));
+                people.insert(guy->parents_.at(0));
             }
             if(guy->parents_.at(1)!=nullptr)
             {
-                people.push_back(guy->parents_.at(1));
+                people.insert(guy->parents_.at(1));
             }
 
         }
@@ -299,13 +296,13 @@ void Familytree::get_recursive_level_up(int levels, Person* guy, std::vector<Per
     }
 }
 
-void Familytree::get_recursive_level_down(int levels, Person *guy, std::vector<Person *> &people) const
+void Familytree::get_recursive_level_down(int levels, Person *guy, std::set<Person *> &people) const
 {
     if(levels==0)
     {
         if(guy->children_.size()>0)
         {
-            people.insert(people.end(),guy->children_.begin(),guy->children_.end());
+            people.insert(guy->children_.begin(),guy->children_.end());
         }
     }
     else
@@ -320,51 +317,16 @@ void Familytree::get_recursive_level_down(int levels, Person *guy, std::vector<P
     }
 }
 
-void Familytree::print_people(std::vector<Person *> people,std::ostream &output) const
+void Familytree::print_people(std::set<Person *> people,std::ostream &output) const
 {
-
-    Person const *waht;
-    std::set<std::string> names;
-
-    for(std::vector<Person*>::const_iterator person_it = people.begin();person_it!=people.end();person_it++)
+    Person* waht;
+    for(std::set<Person*>::const_iterator person = people.begin();person!=people.end();person++)
     {
-        waht = *person_it;
-        names.insert(waht->id_);
+        waht = *person;
+        output<<waht->id_<<std::endl;
     }
-
-    for(std::set<std::string>::const_iterator names_it=names.begin();names_it!=names.end();names_it++)
-    {
-        output<<*names_it<<std::endl;
-    }
-
 
 }
 
-void Familytree::delete_vec_value(Person* value, std::vector<Person *>& people) const
-{
-    Person const *waht;
-    for(std::vector<Person*>::const_iterator vec_value = people.begin();vec_value!=people.end();vec_value++)
-    {
-        waht = *vec_value;
-        if(value->id_ == waht->id_)
-        {
-            people.erase(vec_value);
-            break;
-        }
-    }
-}
 
-bool Familytree::is_name_in(Person *value, std::vector<Person *> &people) const
-{
-    Person const *waht;
-    for(std::vector<Person*>::const_iterator vec_value = people.begin();vec_value!=people.end();vec_value++)
-    {
-        waht = *vec_value;
-        if(value->id_ == waht->id_)
-        {
-            return true;
-        }
-    }
-    return false;
-}
 

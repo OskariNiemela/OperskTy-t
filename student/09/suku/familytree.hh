@@ -184,7 +184,6 @@ private:
      * to make things easier and to avoid "copy-paste-coding"
      */
 
-    void get_children(const Person *person, std::set<std::string> &children) const;
 
     // Return a pointer for ID.
     Person* getPointer(const std::string& id) const;
@@ -201,14 +200,12 @@ private:
                     const IdSet& container, std::ostream& output) const;
 
 
-    void get_recursive_level_up(int levels, Person* guy, std::vector<Person *> &people) const;
-    void get_recursive_level_down(int levels, Person* guy, std::vector<Person *> &people) const;
+    void get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const;
+    void get_recursive_level_down(int levels, Person* guy, std::set<Person *> &people) const;
 
-    void print_people(std::vector<Person*> people, std::ostream &output) const;
+    void print_people(std::set<Person*> people, std::ostream &output) const;
 
-    void delete_vec_value(Person *value, std::vector<Person *> &people) const;
 
-    bool is_name_in(Person *value,std::vector<Person*>&people)const;
 
 };
 
