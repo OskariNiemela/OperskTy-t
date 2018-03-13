@@ -525,7 +525,7 @@ void Familytree::print_people(std::set<Person *, APtrComp> &people,std::ostream 
        output<<suffix;
        suffix_amount--;
     }
-    output<<what<<"."<<std::endl;
+    output<<what<<":"<<std::endl;
 
     for(std::set<Person*,APtrComp>::const_iterator person = people.begin();person!=people.end();person++)
     {
