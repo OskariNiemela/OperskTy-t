@@ -471,7 +471,7 @@ void Familytree::get_shortest(Person *person, Person *&shortest) const
  */
 void Familytree::print_people(std::set<Person *> &people,std::ostream &output,Person* &print_to,std::string what,std::string suffix,int amount) const
 {
-    int suffix_amount;
+    int suffix_amount=0;
     if(suffix!="")
     {
         suffix_amount = amount;
