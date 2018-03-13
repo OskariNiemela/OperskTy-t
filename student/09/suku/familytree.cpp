@@ -18,7 +18,6 @@ bool operator<(const Person& a, const Person& b)
     return a.id_ < b.id_;
 }
 
-
 void Familytree::addNewPerson(const std::string &id, const int &height, std::ostream &output)
 {
 
@@ -33,8 +32,6 @@ void Familytree::addNewPerson(const std::string &id, const int &height, std::ost
     {
         output<<"Error. Person already added."<<std::endl;
     }
-
-
 }
 
 void Familytree::printPersons(std::ostream &output) const
@@ -90,37 +87,25 @@ void Familytree::addRelation(const std::string &child, const std::vector<std::st
 
 void Familytree::printChildren(const std::string &id, std::ostream &output) const
 {
-    Person* person_point = getPointer(id);
-
-    if(!person_point)
+    Person* person_point;
+    if(not getPointer(id,person_point))
     {
-        output<<"error in children"<<std::endl;
+        output<<"Error. "<<id<<" not found."<<std::endl;
         return;
     }
 
     std::set<Person*> children_names;
-
     get_recursive_level_down(0,person_point,children_names);
 
-
-    if(children_names.size()>0)
-    {
-        print_people(children_names,output);
-    }
-    else
-    {
-        output<<"Error. "<<id<<" has no children"<<std::endl;
-    }
-
+    print_people(children_names,output,person_point,"children");
 }
 
 void Familytree::printParents(const std::string &id, std::ostream &output) const
 {
-    Person* person_point = getPointer(id);
-
-    if(!person_point)
+    Person* person_point;
+    if(not getPointer(id,person_point))
     {
-        output<<"error in children"<<std::endl;
+        output<<"Error. "<<id<<" not found."<<std::endl;
         return;
     }
 
@@ -140,17 +125,14 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
 
 void Familytree::printSiblings(const std::string &id, std::ostream &output) const
 {
-    Person* person_point = getPointer(id);
-
-    std::set<Person*> parents;
-
-    if(!person_point)
+    Person* person_point;
+    if(not getPointer(id,person_point))
     {
-        output<<"error in children"<<std::endl;
+        output<<"Error. "<<id<<" not found."<<std::endl;
         return;
     }
 
-
+    std::set<Person*> parents;
 
     get_recursive_level_up(0,person_point,parents);
 
@@ -161,25 +143,22 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
         get_recursive_level_down(0,*parent,sibling);
     }
 
+    sibling.erase(person_point);
 
-    print_people(sibling,output);
-
-
+    print_people(sibling,output,person_point,"siblings");
 }
 
 void Familytree::printCousins(const std::string &id, std::ostream &output) const
 {
-    std::set<Person*> Granma;
-    std::set<Person*> ParentsSiblings;
-
-
-    Person* person_point = getPointer(id);
-
-    if(!person_point)
+    Person* person_point;
+    if(not getPointer(id,person_point))
     {
-        output<<"error in children"<<std::endl;
+        output<<"Error. "<<id<<" not found."<<std::endl;
         return;
     }
+
+    std::set<Person*> Granma;
+    std::set<Person*> ParentsSiblings;
 
     //Get grandparents
     get_recursive_level_up(1,person_point,Granma);
@@ -189,7 +168,6 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     {
         get_recursive_level_down(0,*parent,ParentsSiblings);
     }
-
 
     if(person_point->parents_.at(0)!=nullptr)
     {
@@ -208,13 +186,18 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
         get_recursive_level_down(0,*parentsibling,cousins);
     }
 
-    print_people(cousins,output);
-
+    print_people(cousins,output,person_point,"cousins");
 }
 
 void Familytree::printTallestInLineage(const std::string &id, std::ostream &output) const
 {
-    Person* person_point = getPointer(id);
+    Person* person_point;
+    if(not getPointer(id,person_point))
+    {
+        output<<"Error. "<<id<<" not found."<<std::endl;
+        return;
+    }
+
     Person* tallest_in_lineage = person_point;
 
     get_tallest(person_point,tallest_in_lineage);
@@ -233,7 +216,13 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
 
 void Familytree::printShortestInLineage(const std::string &id, std::ostream &output) const
 {
-    Person* person_point = getPointer(id);
+    Person* person_point;
+    if(not getPointer(id,person_point))
+    {
+        output<<"Error. "<<id<<" not found."<<std::endl;
+        return;
+    }
+
     Person* shortest_in_lineage = person_point;
 
     get_shortest(person_point,shortest_in_lineage);
@@ -252,7 +241,13 @@ void Familytree::printShortestInLineage(const std::string &id, std::ostream &out
 void Familytree::printGrandChildrenN(const std::string &id, const int n, std::ostream &output) const
 {
 
-    Person* person_point = getPointer(id);
+    Person* person_point;
+    if(not getPointer(id,person_point))
+    {
+        output<<"Error. "<<id<<" not found."<<std::endl;
+        return;
+    }
+
     std::set<Person*> grandDad;
 
     if(n>0)
@@ -260,12 +255,18 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
         get_recursive_level_down(n,person_point,grandDad);
     }
 
-    print_people(grandDad,output);
+    print_people(grandDad,output,person_point,"grandchildren","great-",n);
 }
 
 void Familytree::printGrandParentsN(const std::string &id, const int n, std::ostream &output) const
 {
-    Person* person_point = getPointer(id);
+    Person* person_point;
+    if(not getPointer(id,person_point))
+    {
+        output<<"Error. "<<id<<" not found."<<std::endl;
+        return;
+    }
+
     std::set<Person*> grandDad;
 
     if(n>0)
@@ -273,23 +274,21 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
         get_recursive_level_up(n,person_point,grandDad);
     }
 
-    print_people(grandDad,output);
+    print_people(grandDad,output,person_point,"grandparents","great-",n);
 }
 
-Person *Familytree::getPointer(const std::string &id) const
+bool Familytree::getPointer(const std::string &id, Person* &point) const
 {
-    Person* person_point;
     try
     {
-        person_point = data_.at(id);
-        return person_point;
+        point = data_.at(id);
+        return true;
     }
     catch(std::out_of_range)
     {
-        return nullptr;
+        return false;
     }
 }
-
 
 void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const
 {
@@ -305,7 +304,6 @@ void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person
             {
                 people.insert(guy->parents_.at(1));
             }
-
         }
         else
         {
@@ -317,8 +315,6 @@ void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person
             {
                 get_recursive_level_up(levels-1,guy->parents_.at(1),people);
             }
-
-
         }
     }
 }
@@ -359,8 +355,6 @@ void Familytree::get_tallest(Person *person, Person *&tallest) const
             get_tallest(*person_it,tallest);
         }
     }
-
-
 }
 
 void Familytree::get_shortest(Person *person, Person *&shortest) const
@@ -380,16 +374,45 @@ void Familytree::get_shortest(Person *person, Person *&shortest) const
     }
 }
 
-void Familytree::print_people(std::set<Person *> people,std::ostream &output) const
+void Familytree::print_people(std::set<Person *> people,std::ostream &output,Person* print_to,std::string what,std::string suffix,int amount) const
 {
+    if(people.size()==0)
+    {
+        output<<print_to->id_<<" has no ";
+
+        if(suffix!="")
+        {
+           int suffix_amount = amount;
+           suffix_amount--;
+           while(suffix_amount>0)
+           {
+               output<<suffix;
+               suffix_amount--;
+           }
+        }
+
+        output<<what<<"."<<std::endl;
+        return;
+    }
+
+    output<<print_to->id_<<" has "<<people.size()<<" ";
+    if(suffix!="")
+    {
+       int suffix_amount = static_cast<int>(people.size());
+       suffix_amount--;
+       suffix_amount--;
+       while(suffix_amount>0)
+       {
+           output<<suffix;
+           suffix_amount--;
+       }
+    }
+    output<<what<<":"<<std::endl;
+
     Person* waht;
     for(std::set<Person*>::const_iterator person = people.begin();person!=people.end();person++)
     {
         waht = *person;
         output<<waht->id_<<std::endl;
     }
-
 }
-
-
-

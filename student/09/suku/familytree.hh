@@ -35,8 +35,6 @@ struct Person
     std::vector<Person*> children_;
 };
 
-using Funktio = bool(*)(bool,bool);
-
 // <REMOVE FROM TEMPLATE>
 //------------------------
 using Personmap = std::map<std::string, Person*>;
@@ -187,7 +185,7 @@ private:
 
 
     // Return a pointer for ID.
-    Person* getPointer(const std::string& id) const;
+    bool getPointer(const std::string& id, Person* &point) const;
 
     // Printing errors.
     void printNotFound(const std::string& id,
@@ -208,7 +206,7 @@ private:
     void get_tallest(Person* person, Person* &tallest) const;
     void get_shortest(Person* person, Person* &shortest) const;
 
-    void print_people(std::set<Person*> people, std::ostream &output) const;
+    void print_people(std::set<Person*> people, std::ostream &output, Person *print_to, std::string what, std::string suffix="",int amount=0) const;
 
 
 
