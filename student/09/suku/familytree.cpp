@@ -471,6 +471,29 @@ void Familytree::get_shortest(Person *person, Person *&shortest) const
  */
 void Familytree::print_people(std::set<Person *> &people,std::ostream &output,Person* &print_to,std::string what,std::string suffix,int amount) const
 {
+
+
+    // Couldnt figure out how to use the person iterator to get to the name of the person
+    // so im using this pointer to store the pointer at the iterator.
+    // Tried it with person->id_, *person->id people.at(person)->id and nothing worked so whatever
+    Person* print_person;
+
+    std::set<std::string> names;
+
+    /* I overloaded the < operator to get the *Person pointers to go into sets, but it doesnt work because the operator takes
+     * &Person a and &Person b, I only realized this after doing all this, and it is still useful to use sets, since it still
+     * ensures that only one copy of a pointer is in it at a given time, but that means i have to get all the pointers names
+     * out and store them in a new set that will sort through them.
+     */
+
+    for(std::set<Person*>::const_iterator person = people.begin();person!=people.end();person++)
+    {
+        // Storing the Person pointer to the temporary pointer so we can access the id.
+        print_person = *person;
+        names.insert(print_person->id_);
+    }
+
+
     int suffix_amount=0;
     if(suffix!="")
     {
@@ -509,14 +532,9 @@ void Familytree::print_people(std::set<Person *> &people,std::ostream &output,Pe
 
     output<<what<<":"<<std::endl;
 
-    // Couldnt figure out how to use the person iterator to get to the name of the person
-    // so im using this pointer to store the pointer at the iterator.
-    // Tried it with person->id_, *person->id people.at(person)->id and nothing worked so whatever
-    Person* print_person;
-    for(std::set<Person*>::const_iterator person = people.begin();person!=people.end();person++)
+    for(std::set<std::string>::const_iterator name = names.begin(); name!=names.end();name++)
     {
-        // Storing the Person pointer to the temporary pointer so we can access the id.
-        print_person = *person;
-        output<<print_person->id_<<std::endl;
+        output<<*name<<std::endl;
     }
+
 }
