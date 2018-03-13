@@ -17,11 +17,6 @@ Familytree::~Familytree()
     }
 }
 
-//Overload the < operator so we can use sets with our Person structs.
-bool operator<(const Person& a, const Person& b)
-{
-    return a.id_ < b.id_;
-}
 
 
 /* Desc: Adds a new person to our people map
@@ -106,7 +101,7 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
         return;
     }
 
-    std::set<Person*> children_names;
+    std::set<Person*,APtrComp> children_names;
     get_recursive_level_down(0,person_point,children_names);
 
     print_people(children_names,output,person_point,"children");
@@ -125,7 +120,7 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
         return;
     }
 
-    std::set<Person*> parents;
+    std::set<Person*,APtrComp> parents;
 
     get_recursive_level_up(0,person_point,parents);
 
@@ -145,13 +140,13 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
         return;
     }
 
-    std::set<Person*> parents;
+    std::set<Person*,APtrComp> parents;
     get_recursive_level_up(0,person_point,parents);
 
-    std::set<Person*> sibling;
+    std::set<Person*,APtrComp> sibling;
 
     // Go through the parents and get all their children into a set.
-    for(std::set<Person*>::iterator parent = parents.begin();parent!=parents.end();parent++)
+    for(std::set<Person*,APtrComp>::iterator parent = parents.begin();parent!=parents.end();parent++)
     {
         get_recursive_level_down(0,*parent,sibling);
     }
@@ -180,14 +175,14 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     }
 
     //Set up the sets well be needing
-    std::set<Person*> Grandparents;
-    std::set<Person*> ParentsSiblings;
+    std::set<Person*,APtrComp> Grandparents;
+    std::set<Person*,APtrComp> ParentsSiblings;
 
     //Get grandparents
     get_recursive_level_up(1,person_point,Grandparents);
 
     //Get grandparents's kids
-    for(std::set<Person*>::iterator parent = Grandparents.begin();parent!=Grandparents.end();parent++)
+    for(std::set<Person*,APtrComp>::iterator parent = Grandparents.begin();parent!=Grandparents.end();parent++)
     {
         get_recursive_level_down(0,*parent,ParentsSiblings);
     }
@@ -202,10 +197,10 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
         ParentsSiblings.erase(person_point->parents_.at(1));
     }
 
-    std::set<Person*> cousins;
+    std::set<Person*,APtrComp> cousins;
 
     //Get parents siblings kids
-    for(std::set<Person*>::iterator parentsibling = ParentsSiblings.begin();parentsibling!=ParentsSiblings.end();parentsibling++)
+    for(std::set<Person*,APtrComp>::iterator parentsibling = ParentsSiblings.begin();parentsibling!=ParentsSiblings.end();parentsibling++)
     {
         get_recursive_level_down(0,*parentsibling,cousins);
     }
@@ -293,7 +288,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
         return;
     }
 
-    std::set<Person*> grandDad;
+    std::set<Person*,APtrComp> grandDad;
 
     get_recursive_level_down(n,person_point,grandDad);
 
@@ -320,7 +315,7 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
         return;
     }
 
-    std::set<Person*> grandDad;
+    std::set<Person*,APtrComp> grandDad;
 
     get_recursive_level_up(n,person_point,grandDad);
 
@@ -356,7 +351,7 @@ bool Familytree::getPointer(const std::string &id, Person* &point) const
  * param1: pointer to the guy whose family tree were looking at.
  * param2: set where we're gonna gather all the pointers to the people we want to find
  */
-void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const
+void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person *,APtrComp> &people) const
 {
     if(guy!=nullptr)
     {
@@ -394,7 +389,7 @@ void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person
  * param1: pointer to the guy whose family tree were looking at.
  * param2: set where we're gonna gather all the pointers to the people we want to find
  */
-void Familytree::get_recursive_level_down(int levels, Person *person, std::set<Person *> &people) const
+void Familytree::get_recursive_level_down(int levels, Person *person, std::set<Person *, APtrComp> &people) const
 {
     // If we're at the level we want to be
     if(levels==0)
@@ -469,7 +464,7 @@ void Familytree::get_shortest(Person *person, Person *&shortest) const
  * param4: what suffix we want to use (used in printing grandchildren/parents, using the suffix "great-")
  * param5: how many generations away is this (used in printing grandchildren/parents
  */
-void Familytree::print_people(std::set<Person *> &people,std::ostream &output,Person* &print_to,std::string what,std::string suffix,int amount) const
+void Familytree::print_people(std::set<Person *, APtrComp> &people,std::ostream &output,Person* &print_to,std::string what,std::string suffix,int amount) const
 {
 
 
@@ -478,21 +473,22 @@ void Familytree::print_people(std::set<Person *> &people,std::ostream &output,Pe
     // Tried it with person->id_, *person->id people.at(person)->id and nothing worked so whatever
     Person* print_person;
 
+    /*
     std::set<std::string> names;
 
-    /* I overloaded the < operator to get the *Person pointers to go into sets, but it doesnt work because the operator takes
+     * I overloaded the < operator to get the *Person pointers to go into sets, but it doesnt work because the operator takes
      * &Person a and &Person b, I only realized this after doing all this, and it is still useful to use sets, since it still
      * ensures that only one copy of a pointer is in it at a given time, but that means i have to get all the pointers names
      * out and store them in a new set that will sort through them.
-     */
+     *
 
-    for(std::set<Person*>::const_iterator person = people.begin();person!=people.end();person++)
+    for(std::set<Person*,APtrComp>::const_iterator person = people.begin();person!=people.end();person++)
     {
         // Storing the Person pointer to the temporary pointer so we can access the id.
         print_person = *person;
         names.insert(print_person->id_);
     }
-
+    */
 
     int suffix_amount=0;
     if(suffix!="")
@@ -529,12 +525,13 @@ void Familytree::print_people(std::set<Person *> &people,std::ostream &output,Pe
        output<<suffix;
        suffix_amount--;
     }
+    output<<what<<"."<<std::endl;
 
-    output<<what<<":"<<std::endl;
-
-    for(std::set<std::string>::const_iterator name = names.begin(); name!=names.end();name++)
+    for(std::set<Person*,APtrComp>::const_iterator person = people.begin();person!=people.end();person++)
     {
-        output<<*name<<std::endl;
+
+        print_person = *person;
+        output<<print_person->id_<<std::endl;
     }
 
 }

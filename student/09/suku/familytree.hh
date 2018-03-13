@@ -26,6 +26,7 @@
 const std::string NO_ID = "";
 const int NO_HEIGHT = -1;
 
+
 // Struct for the persons data.
 struct Person
 {
@@ -34,6 +35,14 @@ struct Person
     std::vector<Person*> parents_{nullptr, nullptr};
     std::vector<Person*> children_;
 };
+
+struct APtrComp
+{
+  bool operator()(const Person* lhs, const Person* rhs) const  {
+      return lhs->id_<rhs->id_;
+  }
+};
+
 
 using Personmap = std::map<std::string, Person*>;
 
@@ -179,10 +188,10 @@ private:
     bool getPointer(const std::string& id, Person* &point) const;
 
     // Goes "up" the family tree recursively and gathers all the people at the level we want into the people set
-    void get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const;
+    void get_recursive_level_up(int levels, Person* guy, std::set<Person *, APtrComp> &people) const;
 
     // Goes "down" the family tree recursively and gathers all the people at the level we want into the people set
-    void get_recursive_level_down(int levels, Person* person, std::set<Person *> &people) const;
+    void get_recursive_level_down(int levels, Person* person, std::set<Person *,APtrComp> &people) const;
 
     // Finds the tallest person going "down" the family tree and makes the tallest pointer point to that person
     void get_tallest(Person* person, Person* &tallest) const;
@@ -192,7 +201,7 @@ private:
 
     // prints the given set of people with the specifications given, such as what (children,parents,grandparents etc) and suffix (adds great- infront of
     // grandparent/child as needed)
-    void print_people(std::set<Person*> &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
+    void print_people(std::set<Person*, APtrComp> &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
 
 
 
