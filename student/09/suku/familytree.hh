@@ -35,13 +35,7 @@ struct Person
     std::vector<Person*> children_;
 };
 
-// <REMOVE FROM TEMPLATE>
-//------------------------
 using Personmap = std::map<std::string, Person*>;
-//------------------------
-// </REMOVE FROM TEMPLATE>
-
-using IdSet = std::set<std::string>;
 
 /*  Class: Familytree
  *  Description: Datastructure for Person-structs
@@ -172,10 +166,8 @@ public:
                             std::ostream& output) const;
 
 private:
-    // <REMOVE FROM TEMPLATE>
+    // Store all the people in this (std::map<std::string,Person*>) container
     Personmap data_;
-    // </REMOVE FROM TEMPLATE>
-
 
     /* The following functions are meant to make project easier.
      * You can implement them if you want and/or create your own.
@@ -183,30 +175,24 @@ private:
      * to make things easier and to avoid "copy-paste-coding"
      */
 
-
     // Return a pointer for ID.
     bool getPointer(const std::string& id, Person* &point) const;
 
-    // Printing errors.
-    void printNotFound(const std::string& id,
-                       std::ostream& output) const;
-
-    // Turns a vector of persons to a set of IDs.
-    IdSet VectorToIdSet(const std::vector<Person*> &container) const;
-
-    // Prints the the data in a container.
-    void printGroup(const std::string& id, const std::string& group,
-                    const IdSet& container, std::ostream& output) const;
-
-
+    // Goes "up" the family tree recursively and gathers all the people at the level we want into the people set
     void get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const;
-    void get_recursive_level_down(int levels, Person* guy, std::set<Person *> &people) const;
 
+    // Goes "down" the family tree recursively and gathers all the people at the level we want into the people set
+    void get_recursive_level_down(int levels, Person* person, std::set<Person *> &people) const;
 
+    // Finds the tallest person going "down" the family tree and makes the tallest pointer point to that person
     void get_tallest(Person* person, Person* &tallest) const;
+
+    // Finds the shortest person going "down" the family tree and makes the shortets pointer point to that person
     void get_shortest(Person* person, Person* &shortest) const;
 
-    void print_people(std::set<Person*> people, std::ostream &output, Person *print_to, std::string what, std::string suffix="",int amount=0) const;
+    // prints the given set of people with the specifications given, such as what (children,parents,grandparents etc) and suffix (adds great- infront of
+    // grandparent/child as needed)
+    void print_people(std::set<Person*> &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
 
 
 
