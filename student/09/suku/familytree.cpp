@@ -214,12 +214,39 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
 
 void Familytree::printTallestInLineage(const std::string &id, std::ostream &output) const
 {
+    Person* person_point = getPointer(id);
+    Person* tallest_in_lineage = person_point;
 
+    get_tallest(person_point,tallest_in_lineage);
+
+
+    if(tallest_in_lineage==person_point)
+    {
+        output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the tallest person in his/her lineage."<<std::endl;
+    }
+    else
+    {
+        output<<"With the height of "<<tallest_in_lineage->height_<<", ";
+        output<< tallest_in_lineage->id_<< " is the tallest person in "<<person_point->id_<<"'s lineage."<<std::endl;
+    }
 }
 
 void Familytree::printShortestInLineage(const std::string &id, std::ostream &output) const
 {
+    Person* person_point = getPointer(id);
+    Person* shortest_in_lineage = person_point;
 
+    get_shortest(person_point,shortest_in_lineage);
+
+    if(shortest_in_lineage==person_point)
+    {
+        output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the shortest person in his/her lineage."<<std::endl;
+    }
+    else
+    {
+        output<<"With the height of "<<shortest_in_lineage->height_<<", ";
+        output<< shortest_in_lineage->id_<< " is the shortest person in "<<person_point->id_<<"'s lineage."<<std::endl;
+    }
 }
 
 void Familytree::printGrandChildrenN(const std::string &id, const int n, std::ostream &output) const
@@ -313,6 +340,42 @@ void Familytree::get_recursive_level_down(int levels, Person *guy, std::set<Pers
             {
                 get_recursive_level_down(levels-1,*person_it,people);
             }
+        }
+    }
+}
+
+void Familytree::get_tallest(Person *person, Person *&tallest) const
+{
+    if(person->height_ > tallest->height_)
+    {
+        tallest = person;
+    }
+
+
+    if(person->children_.size()>0)
+    {
+        for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
+        {
+            get_tallest(*person_it,tallest);
+        }
+    }
+
+
+}
+
+void Familytree::get_shortest(Person *person, Person *&shortest) const
+{
+    if(person->height_ < shortest->height_)
+    {
+        shortest = person;
+    }
+
+
+    if(person->children_.size()>0)
+    {
+        for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
+        {
+            get_shortest(*person_it,shortest);
         }
     }
 }

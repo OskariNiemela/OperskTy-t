@@ -35,6 +35,7 @@ struct Person
     std::vector<Person*> children_;
 };
 
+using Funktio = bool(*)(bool,bool);
 
 // <REMOVE FROM TEMPLATE>
 //------------------------
@@ -202,6 +203,10 @@ private:
 
     void get_recursive_level_up(int levels, Person* guy, std::set<Person *> &people) const;
     void get_recursive_level_down(int levels, Person* guy, std::set<Person *> &people) const;
+
+
+    void get_tallest(Person* person, Person* &tallest) const;
+    void get_shortest(Person* person, Person* &shortest) const;
 
     void print_people(std::set<Person*> people, std::ostream &output) const;
 
