@@ -1,3 +1,16 @@
+/*
+#############################################################################
+# TIE-02200 Ohjelmoinnin peruskurssi, K2018                             #
+# Project3: Suku on pahin                                             #
+# Project Coder : Oskari Niemela                                       #
+# Student Number: 263440                                              #
+# File: familytree.cpp                                                #
+# Description: contains methods for the familytree class                 #
+#############################################################################
+*/
+
+
+
 #include "familytree.hh"
 
 
