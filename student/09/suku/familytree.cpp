@@ -238,8 +238,11 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
 
     Person* tallest_in_lineage = person_point;
 
-    // finds the tallest person from the person given and makes tallsest_in_lineage point to it
-    get_tallest(person_point,tallest_in_lineage);
+    if(person_point->children_.size()>0)
+    {
+        // finds the tallest person from the person given and makes tallest_in_lineage point to it
+        get_height(person_point,tallest_in_lineage,true);
+    }
 
     // Two options with different printouts: either the given person is the tallest or someone else is.
     if(tallest_in_lineage==person_point)
@@ -268,8 +271,11 @@ void Familytree::printShortestInLineage(const std::string &id, std::ostream &out
 
     Person* shortest_in_lineage = person_point;
 
-    //Finds the shortest person from lineage and makes shortest_in_lineage point to it
-    get_shortest(person_point,shortest_in_lineage);
+    if(person_point->children_.size()>0)
+    {
+        //Finds the shortest person from lineage and makes shortest_in_lineage point to it
+        get_height(person_point,shortest_in_lineage,false);
+    }
 
     // Either the given person is the shortest or its someone else, these require different printouts
     if(shortest_in_lineage==person_point)
@@ -428,37 +434,26 @@ void Familytree::get_recursive_level_down(int levels, Person *person, std::set<P
     }
 }
 
-/* Desc: Figures out who is the tallest person starting from the person were given
- * param0: person whose lineage/height we want to check out
- * param1: tallest person we've found yet
- */
-void Familytree::get_tallest(Person *person, Person *&tallest) const
-{
-
-    if(person->height_ > tallest->height_)
-    {
-        tallest = person;
-    }
-
-    // call this function on all this persons children (if there are any)
-    if(person->children_.size()>0)
-    {
-        for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
-        {
-            get_tallest(*person_it,tallest);
-        }
-    }
-}
-
 /* Desc: Figures out who is the shortest person starting from the person we're given
  * param0: person whose lineage/height we want to check
  * param1: shortest person we've found so far
+ * param2: whether we're searching for the tallest (true) or shortest (false)
  */
-void Familytree::get_shortest(Person *person, Person *&shortest) const
+void Familytree::get_height(Person *person, Person *&height_person, bool tallest) const
 {
-    if(person->height_ < shortest->height_)
+    if(tallest)
     {
-        shortest = person;
+        if(person->height_ > height_person->height_)
+        {
+            height_person = person;
+        }
+    }
+    else
+    {
+        if(person->height_ < height_person->height_)
+        {
+            height_person = person;
+        }
     }
 
     // call this function on all the children of the person we're checking (if any found)
@@ -466,7 +461,7 @@ void Familytree::get_shortest(Person *person, Person *&shortest) const
     {
         for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
         {
-            get_shortest(*person_it,shortest);
+            get_height(*person_it,height_person,tallest);
         }
     }
 }
@@ -484,10 +479,9 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
     int suffix_amount=0;
     if(suffix!="")
     {
-        suffix_amount = amount;
         //The first of the suffixes is replaced with the word grand in grandparent and grandchildren
         //so well delete one of them before beginning the print
-        suffix_amount--;
+        suffix_amount = amount-1;
     }
 
 
@@ -504,7 +498,6 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
            suffix_amount--;
         }
 
-
         output<<what<<"."<<std::endl;
         return;
     }
@@ -519,8 +512,8 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
     output<<what<<":"<<std::endl;
 
     // Couldnt figure out how to use the person iterator to get to the name of the person
-    // so im using this pointer to store the pointer at the iterator.
-    // Tried it with person->id_, *person->id people.at(person)->id and nothing worked so whatever
+    // so im using this pointer to store the pointer that the iterator is pointing to
+    // Tried it with person->id_, *person->id people.at(person)->id and nothing worked, so whatever
     Person* print_person;
 
     for(std::set<Person*,PersonPtrComp>::const_iterator person = people.begin();person!=people.end();person++)

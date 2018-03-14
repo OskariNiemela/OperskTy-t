@@ -195,11 +195,8 @@ private:
     // Goes "down" the family tree recursively and gathers all the people at the level we want into the people set
     void get_recursive_level_down(int levels, Person* person, std::set<Person *,PersonPtrComp> &people) const;
 
-    // Finds the tallest person going "down" the family tree and makes the tallest pointer point to that person
-    void get_tallest(Person* person, Person* &tallest) const;
-
-    // Finds the shortest person going "down" the family tree and makes the shortets pointer point to that person
-    void get_shortest(Person* person, Person* &shortest) const;
+    // Finds the shortest or tallest person, based on the boolean provided
+    void get_height(Person* person, Person* &height_person, bool tallest) const;
 
     // prints the given set of people with the specifications given, such as what (children,parents,grandparents etc) and suffix (adds great- infront of
     // grandparent/child as needed)
