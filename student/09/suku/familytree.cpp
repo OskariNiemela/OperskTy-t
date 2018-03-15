@@ -237,15 +237,15 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
     }
 
     Person* tallest_in_lineage = person_point;
-
+    int tallest_gen =0;
     if(person_point->children_.size()>0)
     {
         // finds the tallest person from the person given and makes tallest_in_lineage point to it
-        get_height(person_point,tallest_in_lineage,true);
+        get_height(person_point,tallest_in_lineage,true,tallest_gen);
     }
 
     // Two options with different printouts: either the given person is the tallest or someone else is.
-    if(tallest_in_lineage==person_point)
+    if(tallest_gen == 0)
     {
         output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the tallest person his/her lineage."<<std::endl;
     }
@@ -270,15 +270,15 @@ void Familytree::printShortestInLineage(const std::string &id, std::ostream &out
     }
 
     Person* shortest_in_lineage = person_point;
-
+    int shortest_gen = 0;
     if(person_point->children_.size()>0)
     {
         //Finds the shortest person from lineage and makes shortest_in_lineage point to it
-        get_height(person_point,shortest_in_lineage,false);
+        get_height(person_point,shortest_in_lineage,false,shortest_gen);
     }
 
     // Either the given person is the shortest or its someone else, these require different printouts
-    if(shortest_in_lineage==person_point)
+    if(shortest_gen==0)
     {
         output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the shortest person his/her lineage."<<std::endl;
     }
@@ -439,20 +439,22 @@ void Familytree::get_recursive_level_down(int levels, Person *person, std::set<P
  * param1: shortest person we've found so far
  * param2: whether we're searching for the tallest (true) or shortest (false)
  */
-void Familytree::get_height(Person *person, Person *&height_person, bool tallest) const
+void Familytree::get_height(Person *person, Person *&height_person, bool tallest, int &height_gen, int current_gen) const
 {
     if(tallest)
     {
-        if(person->height_ > height_person->height_)
+        if((person->height_ > height_person->height_)||((current_gen<height_gen)&&(person->height_==height_person->height_)))
         {
             height_person = person;
+            height_gen = current_gen;
         }
     }
     else
     {
-        if(person->height_ < height_person->height_)
+        if((person->height_ < height_person->height_)||((current_gen<height_gen)&&(person->height_==height_person->height_)))
         {
             height_person = person;
+            height_gen=current_gen;
         }
     }
 
@@ -461,7 +463,7 @@ void Familytree::get_height(Person *person, Person *&height_person, bool tallest
     {
         for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
         {
-            get_height(*person_it,height_person,tallest);
+            get_height(*person_it,height_person,tallest,height_gen,current_gen+1);
         }
     }
 }

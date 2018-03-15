@@ -196,7 +196,7 @@ private:
     void get_recursive_level_down(int levels, Person* person, std::set<Person *,PersonPtrComp> &people) const;
 
     // Finds the shortest or tallest person, based on the boolean provided
-    void get_height(Person* person, Person* &height_person, bool tallest) const;
+    void get_height(Person* person, Person* &height_person, bool tallest, int &height_gen, int current_gen =1) const;
 
     // prints the given set of people with the specifications given, such as what (children,parents,grandparents etc) and suffix (adds great- infront of
     // grandparent/child as needed)
