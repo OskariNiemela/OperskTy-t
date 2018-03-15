@@ -438,6 +438,10 @@ void Familytree::get_recursive_level_down(int levels, Person *person, std::set<P
  * param0: person whose lineage/height we want to check
  * param1: shortest person we've found so far
  * param2: whether we're searching for the tallest (true) or shortest (false)
+ * param3: which is the tallest/shortest generation so far, needed in order to make sure
+ *        that were getting the person closest in the lineage to the person we begun to check
+ * param4: default value of 1 (the person whose lineage we check is 0) makes sure we know which
+ *        generation of kids were looking at, and is used to change height_gen when necessary
  */
 void Familytree::get_height(Person *person, Person *&height_person, bool tallest, int &height_gen, int current_gen) const
 {
@@ -486,14 +490,12 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
         suffix_amount = amount-1;
     }
 
-
-    // We couldnt find any relatives for this person
+    // We couldn't find any relatives for this person
     if(people.size()==0)
     {
-        //Print the notification that this person has no relatives of the type given
         output<<print_to->id_<<" has no ";
 
-        //Print the appropriate amount of suffixes (ex. great-great-great-grandmother), it there is a suffix given
+        // Print the appropriate amount of suffixes (ex. great-great-great-grandmother), it there is a suffix given
         while(suffix_amount>0)
         {
            output<<suffix;
@@ -506,6 +508,8 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
 
     output<<print_to->id_<<" has "<<people.size()<<" ";
 
+    // While this code is repeated twice, the prints before and after it are different, and I dont think
+    // making a new function for 3 lines of code is really necessary so I repeated it here.
     while(suffix_amount>0)
     {
        output<<suffix;
@@ -515,12 +519,11 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
 
     // Couldnt figure out how to use the person iterator to get to the name of the person
     // so im using this pointer to store the pointer that the iterator is pointing to
-    // Tried it with person->id_, *person->id people.at(person)->id and nothing worked, so whatever
+    // Tried it with person->id_, (*person)->id people.at(person)->id and nothing worked, so whatever
     Person* print_person;
 
     for(std::set<Person*,PersonPtrComp>::const_iterator person = people.begin();person!=people.end();person++)
     {
-
         print_person = *person;
         output<<print_person->id_<<std::endl;
     }
