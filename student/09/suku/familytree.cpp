@@ -9,10 +9,7 @@
 #############################################################################
 */
 
-
-
 #include "familytree.hh"
-
 
 //Constructor
 Familytree::Familytree()
@@ -29,8 +26,6 @@ Familytree::~Familytree()
         delete people->second;
     }
 }
-
-
 
 /* Desc: Adds a new person to our people map
  * param0: id, the name of the new person
@@ -75,26 +70,23 @@ void Familytree::printPersons(std::ostream &output) const
  */
 void Familytree::addRelation(const std::string &child, const std::vector<std::string> &parents, std::ostream &output)
 {
-    Person* child_ptr;
+    Person* child_ptr=nullptr;
     if(not getPointer(child,child_ptr))
     {
         output<<"Error. "<<child<<" not found."<<std::endl;
         return;
     }
 
-    Person* father_ptr;
-    bool father = getPointer(parents.at(0),father_ptr);
+    Person* father_ptr=nullptr;
+    Person* mother_ptr=nullptr;
 
-    Person* mother_ptr;
-    bool mother = getPointer(parents.at(1),mother_ptr);
-
-    if(father)
+    if(getPointer(parents.at(0),father_ptr))
     {
         child_ptr->parents_.at(0) = father_ptr;
         father_ptr->children_.push_back(child_ptr);
     }
 
-    if(mother)
+    if(getPointer(parents.at(1),mother_ptr))
     {
         child_ptr->parents_.at(1) = mother_ptr;
         mother_ptr->children_.push_back(child_ptr);
@@ -107,7 +99,7 @@ void Familytree::addRelation(const std::string &child, const std::vector<std::st
  */
 void Familytree::printChildren(const std::string &id, std::ostream &output) const
 {
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -128,7 +120,7 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
  */
 void Familytree::printParents(const std::string &id, std::ostream &output) const
 {
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -148,7 +140,7 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
  */
 void Familytree::printSiblings(const std::string &id, std::ostream &output) const
 {
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -182,7 +174,7 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
  */
 void Familytree::printCousins(const std::string &id, std::ostream &output) const
 {
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -229,7 +221,7 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
  */
 void Familytree::printTallestInLineage(const std::string &id, std::ostream &output) const
 {
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -262,7 +254,7 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
  */
 void Familytree::printShortestInLineage(const std::string &id, std::ostream &output) const
 {
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -302,7 +294,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
         return;
     }
 
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
@@ -329,7 +321,7 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
         return;
     }
 
-    Person* person_point;
+    Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
         output<<"Error. "<<id<<" not found."<<std::endl;
