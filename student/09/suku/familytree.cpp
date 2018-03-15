@@ -247,7 +247,7 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
     // Two options with different printouts: either the given person is the tallest or someone else is.
     if(tallest_gen == 0)
     {
-        output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the tallest person his/her lineage."<<std::endl;
+        output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the tallest person in his/her lineage."<<std::endl;
     }
     else
     {
@@ -280,7 +280,7 @@ void Familytree::printShortestInLineage(const std::string &id, std::ostream &out
     // Either the given person is the shortest or its someone else, these require different printouts
     if(shortest_gen==0)
     {
-        output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the shortest person his/her lineage."<<std::endl;
+        output<<"With the height of "<< person_point->height_<<", "<< person_point->id_ << " is the shortest person in his/her lineage."<<std::endl;
     }
     else
     {
