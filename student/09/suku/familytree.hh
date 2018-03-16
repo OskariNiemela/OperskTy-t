@@ -26,7 +26,6 @@
 const std::string NO_ID = "";
 const int NO_HEIGHT = -1;
 
-
 bool cmp_less(const int&a, const int&b);
 bool cmp_more(const int&a, const int&b);
 using compare = bool(*)(const int&,const int&);
@@ -48,7 +47,6 @@ struct PersonPtrComp
       return lhs->id_<rhs->id_;
   }
 };
-
 
 using Personmap = std::map<std::string, Person*>;
 
@@ -203,6 +201,7 @@ private:
     // grandparent/child as needed)
     void print_people(std::set<Person*, PersonPtrComp> &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
 
+    void print_no_id(std::string name,std::ostream &output) const;
 };
 
 #endif // FAMILYTREE_H

@@ -11,6 +11,7 @@
 
 #include "familytree.hh"
 
+// Comparison functions to help with figuring out the tallest/shortest of a lineage
 bool cmp_less(const int &a, const int &b)
 {
     return a<b;
@@ -82,7 +83,7 @@ void Familytree::addRelation(const std::string &child, const std::vector<std::st
     Person* child_ptr=nullptr;
     if(not getPointer(child,child_ptr))
     {
-        output<<"Error. "<<child<<" not found."<<std::endl;
+        print_no_id(child,output);
         return;
     }
 
@@ -111,7 +112,7 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -132,7 +133,7 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -152,7 +153,7 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -186,7 +187,7 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -233,7 +234,7 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -266,7 +267,7 @@ void Familytree::printShortestInLineage(const std::string &id, std::ostream &out
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -306,7 +307,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -333,7 +334,7 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
     Person* person_point=nullptr;
     if(not getPointer(id,person_point))
     {
-        output<<"Error. "<<id<<" not found."<<std::endl;
+        print_no_id(id,output);
         return;
     }
 
@@ -499,4 +500,9 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
         output<<print_person->id_<<std::endl;
     }
 
+}
+
+void Familytree::print_no_id(std::string name, std::ostream &output) const
+{
+   output<<"Error. "<<name<<" not found."<<std::endl;
 }
