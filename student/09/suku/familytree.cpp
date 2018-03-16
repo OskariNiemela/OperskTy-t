@@ -118,7 +118,7 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
     // Person pointers get compared with the PersonPtrComp so they
     // get ordered by the Person ids
     std::set<Person*,PersonPtrComp> children_names;
-    get_recursive_level_down(0,person_point,children_names);
+    get_recursive_level(0,person_point,children_names,person_point->children_);
 
     print_people(children_names,output,person_point,"children");
 }
@@ -138,7 +138,7 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
 
     std::set<Person*,PersonPtrComp> parents;
 
-    get_recursive_level_up(0,person_point,parents);
+    get_recursive_level(0,person_point,parents,person_point->parents_);
 
     print_people(parents,output,person_point,"parents");
 }
@@ -157,14 +157,14 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
     }
 
     std::set<Person*,PersonPtrComp> parents;
-    get_recursive_level_up(0,person_point,parents);
+    get_recursive_level(0,person_point,parents,person_point->parents_);
 
     std::set<Person*,PersonPtrComp> sibling;
 
     // Go through the parents and get all their children into a set.
-    for(std::set<Person*,PersonPtrComp>::iterator parent = parents.begin();parent!=parents.end();parent++)
+    for(Person* person_it:parents)
     {
-        get_recursive_level_down(0,*parent,sibling);
+        get_recursive_level(0,person_it,sibling,person_it->children_);
     }
 
     // Erase the person whose siblings we wish to print, since they cant be their own sibling.
@@ -195,12 +195,12 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     std::set<Person*,PersonPtrComp> ParentsSiblings;
 
     //Get grandparents
-    get_recursive_level_up(1,person_point,Grandparents);
+    get_recursive_level(-1,person_point,Grandparents,person_point->parents_);
 
     //Get grandparents's kids
-    for(std::set<Person*,PersonPtrComp>::iterator parent = Grandparents.begin();parent!=Grandparents.end();parent++)
+    for(Person* person_it:Grandparents)
     {
-        get_recursive_level_down(0,*parent,ParentsSiblings);
+        get_recursive_level(0,person_it,ParentsSiblings,person_it->children_);
     }
 
     // Erase the parents of the given person from the set, so were left with just the parents siblings.
@@ -216,9 +216,9 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     std::set<Person*,PersonPtrComp> cousins;
 
     //Get parents siblings kids
-    for(std::set<Person*,PersonPtrComp>::iterator parentsibling = ParentsSiblings.begin();parentsibling!=ParentsSiblings.end();parentsibling++)
+    for(Person* parentsibling:ParentsSiblings)
     {
-        get_recursive_level_down(0,*parentsibling,cousins);
+        get_recursive_level(0,parentsibling,cousins,parentsibling->children_);
     }
 
     print_people(cousins,output,person_point,"cousins");
@@ -312,7 +312,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
 
     std::set<Person*,PersonPtrComp> grandDad;
 
-    get_recursive_level_down(n,person_point,grandDad);
+    get_recursive_level(n,person_point,grandDad,person_point->children_);
 
     print_people(grandDad,output,person_point,"grandchildren","great-",n);
 }
@@ -339,7 +339,7 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
 
     std::set<Person*,PersonPtrComp> grandDad;
 
-    get_recursive_level_up(n,person_point,grandDad);
+    get_recursive_level(-n,person_point,grandDad,person_point->parents_);
 
     print_people(grandDad,output,person_point,"grandparents","great-",n);
 }
@@ -366,66 +366,52 @@ bool Familytree::getPointer(const std::string &id, Person* &point) const
     }
 }
 
-/* Desc: goes recursively levels "up" the family tree, and adds all the parents of the people at that level
- *      to the people set.
- *
- * param0: how many levels we want to go "up" (0=parents, 1=grandparents, etc.)
- * param1: pointer to the guy whose family tree were looking at.
- * param2: set where we're gonna gather all the pointers to the people we want to find
- */
-void Familytree::get_recursive_level_up(int levels, Person* guy, std::set<Person *,PersonPtrComp> &people) const
-{
-    if(guy!=nullptr)
-    {
-        // default case: if were already at the level we want, add all the parents of the guy were checking
-        if(levels==0)
-        {
-            if(guy->parents_.at(0)!=nullptr)
-            {
-                people.insert(guy->parents_.at(0));
-            }
-            if(guy->parents_.at(1)!=nullptr)
-            {
-                people.insert(guy->parents_.at(1));
-            }
-        }
-        else
-        {
-            // incase were not at the level we want to be, then we call this function on our parents (if there are any)
-            get_recursive_level_up(levels-1,guy->parents_.at(0),people);
-            get_recursive_level_up(levels-1,guy->parents_.at(1),people);
-        }
-    }
-}
-
 /* Desc: goes recursively levels "down" the family tree, and adds all the children of the people at that level
  *      to the people set.
  *
- * param0: how many levels we want to go "up" (0=children, 1=grandchildren, etc.)
+ * param0: how many levels we want to go "up" or "down" positive numbers go down the children, negative numbers go up the parents
  * param1: pointer to the guy whose family tree were looking at.
  * param2: set where we're gonna gather all the pointers to the people we want to find
+ * param3: which group of people (parents or children) to add to the people set, determines which vector of person pointers is added
+ *        once the levels hits 0.
  */
-void Familytree::get_recursive_level_down(int levels, Person *person, std::set<Person *, PersonPtrComp> &people) const
+void Familytree::get_recursive_level(int levels, Person *person, std::set<Person *, PersonPtrComp> &people,const std::vector<Person*> &people_to_add) const
 {
     // If we're at the level we want to be
     if(levels==0)
     {
         // If the person we're checking has children, add them to the set
-        if(person->children_.size()>0)
+        for(Person* person_it:people_to_add)
         {
-            people.insert(person->children_.begin(),person->children_.end());
+            if(person_it!=nullptr)
+            {
+                people.insert(person_it);
+            }
         }
     }
     else
     {
-        //If we're not at the level we need to be, iterate through the persons children and call this function on them
-        if(person->children_.size()>0)
+        if(levels>0)
         {
-            for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
+            for(Person* person_it:person->children_)
             {
-                get_recursive_level_down(levels-1,*person_it,people);
+                if(person_it!=nullptr)
+                {
+                    get_recursive_level(levels-1,person_it,people,person_it->children_);
+                }
             }
         }
+        else
+        {
+            for(Person* person_it:person->parents_)
+            {
+                if(person_it!=nullptr)
+                {
+                    get_recursive_level(levels+1,person_it,people,person_it->parents_);
+                }
+            }
+        }
+
     }
 }
 
