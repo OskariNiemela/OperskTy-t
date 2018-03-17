@@ -50,6 +50,7 @@ struct PersonPtrComp
 
 using Personmap = std::map<std::string, Person*>;
 
+using Personset = std::set<Person*,PersonPtrComp>;
 /*  Class: Familytree
  *  Description: Datastructure for Person-structs
  */
@@ -192,14 +193,14 @@ private:
     bool getPointer(const std::string& id, Person* &point) const;
 
     // Goes "down" the family tree recursively and gathers all the people at the level we want into the people set
-    void get_recursive_level(int levels, Person* person, std::set<Person *,PersonPtrComp> &people, const std::vector<Person *> &people_to_add) const;
+    void get_recursive_level(int levels, Person* person, Personset &people, const std::vector<Person *> &people_to_add) const;
 
     // Finds the shortest or tallest person, based on the boolean provided
     void get_height(Person* person, Person* &height_person, compare comparator, int &height_gen, int current_gen =1) const;
 
     // prints the given set of people with the specifications given, such as what (children,parents,grandparents etc) and suffix (adds great- infront of
     // grandparent/child as needed)
-    void print_people(std::set<Person*, PersonPtrComp> &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
+    void print_people(Personset &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
 
     void print_no_id(std::string name,std::ostream &output) const;
 };

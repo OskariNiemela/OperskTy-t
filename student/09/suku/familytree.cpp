@@ -118,7 +118,7 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
 
     // Person pointers get compared with the PersonPtrComp so they
     // get ordered by the Person ids
-    std::set<Person*,PersonPtrComp> children_names;
+    Personset children_names;
     get_recursive_level(0,person_point,children_names,person_point->children_);
 
     print_people(children_names,output,person_point,"children");
@@ -137,7 +137,7 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
         return;
     }
 
-    std::set<Person*,PersonPtrComp> parents;
+    Personset parents;
 
     get_recursive_level(0,person_point,parents,person_point->parents_);
 
@@ -157,10 +157,10 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
         return;
     }
 
-    std::set<Person*,PersonPtrComp> parents;
+    Personset parents;
     get_recursive_level(0,person_point,parents,person_point->parents_);
 
-    std::set<Person*,PersonPtrComp> sibling;
+    Personset sibling;
 
     // Go through the parents and get all their children into a set.
     for(Person* person_it:parents)
@@ -192,8 +192,8 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     }
 
     //Set up the sets well be needing
-    std::set<Person*,PersonPtrComp> Grandparents;
-    std::set<Person*,PersonPtrComp> ParentsSiblings;
+    Personset Grandparents;
+    Personset ParentsSiblings;
 
     //Get grandparents
     get_recursive_level(-1,person_point,Grandparents,person_point->parents_);
@@ -203,6 +203,7 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     {
         get_recursive_level(0,person_it,ParentsSiblings,person_it->children_);
     }
+
 
     // Erase the parents of the given person from the set, so were left with just the parents siblings.
     if(person_point->parents_.at(0)!=nullptr)
@@ -214,7 +215,7 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
         ParentsSiblings.erase(person_point->parents_.at(1));
     }
 
-    std::set<Person*,PersonPtrComp> cousins;
+    Personset cousins;
 
     //Get parents siblings kids
     for(Person* parentsibling:ParentsSiblings)
@@ -311,7 +312,7 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
         return;
     }
 
-    std::set<Person*,PersonPtrComp> grandDad;
+    Personset grandDad;
 
     get_recursive_level(n,person_point,grandDad,person_point->children_);
 
@@ -338,7 +339,7 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
         return;
     }
 
-    std::set<Person*,PersonPtrComp> grandDad;
+    Personset grandDad;
 
     get_recursive_level(-n,person_point,grandDad,person_point->parents_);
 
@@ -376,7 +377,7 @@ bool Familytree::getPointer(const std::string &id, Person* &point) const
  * param3: which group of people (parents or children) to add to the people set, determines which vector of person pointers is added
  *        once the levels hits 0.
  */
-void Familytree::get_recursive_level(int levels, Person *person, std::set<Person *, PersonPtrComp> &people,const std::vector<Person*> &people_to_add) const
+void Familytree::get_recursive_level(int levels, Person *person, Personset &people, const std::vector<Person*> &people_to_add) const
 {
     // If we're at the level we want to be
     if(levels==0)
@@ -437,9 +438,9 @@ void Familytree::get_height(Person *person, Person *&height_person, compare comp
     // call this function on all the children of the person we're checking (if any found)
     if(person->children_.size()>0)
     {
-        for(std::vector<Person*>::const_iterator person_it = person->children_.begin();person_it!=person->children_.end();person_it++)
+        for(Person* person_it:person->children_)
         {
-            get_height(*person_it,height_person,comparator,height_gen,current_gen+1);
+            get_height(person_it,height_person,comparator,height_gen,current_gen+1);
         }
     }
 }
@@ -452,7 +453,7 @@ void Familytree::get_height(Person *person, Person *&height_person, compare comp
  * param4: what suffix we want to use (used in printing grandchildren/parents, using the suffix "great-")
  * param5: how many generations away is this (used in printing grandchildren/parents
  */
-void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ostream &output,Person* &print_to,std::string what,std::string suffix,int amount) const
+void Familytree::print_people(Personset &people, std::ostream &output, Person* &print_to, std::string what, std::string suffix, int amount) const
 {
     int suffix_amount=0;
     if(suffix!="")
@@ -489,15 +490,9 @@ void Familytree::print_people(std::set<Person *, PersonPtrComp> &people,std::ost
     }
     output<<what<<":"<<std::endl;
 
-    // Couldnt figure out how to use the person iterator to get to the name of the person
-    // so im using this pointer to store the pointer that the iterator is pointing to
-    // Tried it with person->id_, (*person)->id people.at(person)->id and nothing worked, so whatever
-    Person* print_person;
-
-    for(std::set<Person*,PersonPtrComp>::const_iterator person = people.begin();person!=people.end();person++)
+    for(Person* person:people)
     {
-        print_person = *person;
-        output<<print_person->id_<<std::endl;
+        output<<person->id_<<std::endl;
     }
 
 }
