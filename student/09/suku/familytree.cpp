@@ -341,6 +341,7 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
 
     Personset grandDad;
 
+    // -n since we're going "up" the family tree by n generations
     get_recursive_level(-n,person_point,grandDad,person_point->parents_);
 
     print_people(grandDad,output,person_point,"grandparents","great-",n);
@@ -393,6 +394,8 @@ void Familytree::get_recursive_level(int levels, Person *person, Personset &peop
     }
     else
     {
+        // Since positive levels means we're going up, we need to iterate through the children of the person
+        // and also provide the childrens children as the reference vector
         if(levels>0)
         {
             for(Person* person_it:person->children_)
@@ -403,6 +406,8 @@ void Familytree::get_recursive_level(int levels, Person *person, Personset &peop
                 }
             }
         }
+        // If the levels are not positive, and not 0 then we go through the persons parents and provide their parents parents as
+        // the vector of people we need to take into our set.
         else
         {
             for(Person* person_it:person->parents_)
@@ -428,7 +433,9 @@ void Familytree::get_recursive_level(int levels, Person *person, Personset &peop
  */
 void Familytree::get_height(Person *person, Person *&height_person, compare comparator, int &height_gen, int current_gen) const
 {
-
+    // Comparator is automatically the one we want since its provided as a parameter for this function. The other options is that the persons
+    // height that we're currently checking is the same as the height_person who is the shortest/tallest, and if the person we're checking
+    // is from an older generation, we change the height_person to point to the current person being checked.
     if(comparator(person->height_, height_person->height_)||((current_gen<height_gen)&&(person->height_==height_person->height_)))
     {
         height_person = person;
@@ -497,6 +504,10 @@ void Familytree::print_people(Personset &people, std::ostream &output, Person* &
 
 }
 
+/* Desc: prints the no ID found error message
+ * param0: the id/name of the person
+ * param1: outputstream to print the message
+ */
 void Familytree::print_no_id(std::string name, std::ostream &output) const
 {
    output<<"Error. "<<name<<" not found."<<std::endl;
