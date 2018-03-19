@@ -5,7 +5,7 @@
 # Project Coder : Oskari Niemela                                       #
 # Student Number: 263440                                              #
 # File: familytree.cpp                                                #
-# Description: contains methods for the familytree class                 #
+# Description: contains method definitions for the familytree class       #
 #############################################################################
 */
 
@@ -37,11 +37,6 @@ Familytree::~Familytree()
     }
 }
 
-/* Desc: Adds a new person to our people map
- * param0: id, the name of the new person
- * param1: height, the height to give the new person
- * param2: the output stream we'll use to print any errors
- */
 void Familytree::addNewPerson(const std::string &id, const int &height, std::ostream &output)
 {
     //Check if there already is a person with that name in the map
@@ -58,9 +53,6 @@ void Familytree::addNewPerson(const std::string &id, const int &height, std::ost
     }
 }
 
-/* Desc: prints all the people in our people map
- * param0: output stream to print any errors
- */
 void Familytree::printPersons(std::ostream &output) const
 {
     std::map<std::string,Person*>::const_iterator people;
@@ -73,11 +65,6 @@ void Familytree::printPersons(std::ostream &output) const
     }
 }
 
-/* Desc: adds the parent/child relationships to the people
- * param0: name of child
- * param1: name of parent(s)
- * param2: output stream to print any errors
- */
 void Familytree::addRelation(const std::string &child, const std::vector<std::string> &parents, std::ostream &output)
 {
     Person* child_ptr=nullptr;
@@ -103,10 +90,6 @@ void Familytree::addRelation(const std::string &child, const std::vector<std::st
     }
 }
 
-/* Desc: prints the children of the given person
- * param0: name of person
- * param1: output stream to print names/errors
- */
 void Familytree::printChildren(const std::string &id, std::ostream &output) const
 {
     Person* person_point=nullptr;
@@ -124,10 +107,6 @@ void Familytree::printChildren(const std::string &id, std::ostream &output) cons
     print_people(children_names,output,person_point,"children");
 }
 
-/* Desc: prints the parents of the given person
- * param0: name of the person
- * param1: output stream to print names/errors
- */
 void Familytree::printParents(const std::string &id, std::ostream &output) const
 {
     Person* person_point=nullptr;
@@ -144,10 +123,6 @@ void Familytree::printParents(const std::string &id, std::ostream &output) const
     print_people(parents,output,person_point,"parents");
 }
 
-/* Desc: prints the siblings of the given person
- * param0: name of the person
- * param1: outputstream to print names/errors
- */
 void Familytree::printSiblings(const std::string &id, std::ostream &output) const
 {
     Person* person_point=nullptr;
@@ -174,14 +149,6 @@ void Familytree::printSiblings(const std::string &id, std::ostream &output) cons
     print_people(sibling,output,person_point,"siblings");
 }
 
-/* Desc: prints the cousins of the given person
- * param0: name of the person
- * param1: outputstream to print names/errors
- *
- * Gets the grandparents of the given person, gets all the grandparents children
- * deletes the parents of the given person, then just gets all the children
- * of the parents siblings and prints their names.
- */
 void Familytree::printCousins(const std::string &id, std::ostream &output) const
 {
     Person* person_point=nullptr;
@@ -204,7 +171,6 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
         get_recursive_level(0,person_it,ParentsSiblings,person_it->children_);
     }
 
-
     // Erase the parents of the given person from the set, so were left with just the parents siblings.
     if(person_point->parents_.at(0)!=nullptr)
     {
@@ -226,10 +192,6 @@ void Familytree::printCousins(const std::string &id, std::ostream &output) const
     print_people(cousins,output,person_point,"cousins");
 }
 
-/* Desc: prints the tallest person starting from the person given and going down the familial relations,
- * param0: name of the person
- * param1: output stream to print names/errors
- */
 void Familytree::printTallestInLineage(const std::string &id, std::ostream &output) const
 {
     Person* person_point=nullptr;
@@ -259,10 +221,6 @@ void Familytree::printTallestInLineage(const std::string &id, std::ostream &outp
     }
 }
 
-/* Desc: prints the shortest person starting from the person given and going down the familial relations,
- * param0: name of the person
- * param1: output stream to print names/errors
- */
 void Familytree::printShortestInLineage(const std::string &id, std::ostream &output) const
 {
     Person* person_point=nullptr;
@@ -292,11 +250,6 @@ void Familytree::printShortestInLineage(const std::string &id, std::ostream &out
     }
 }
 
-/* Desc: prints the great-*(n-1)grandchildren of the given person
- * param0: the name of the person
- * param1: the amount of generations to go down (1=grandchildren, 2=great-grandchildren, etc)
- * param2: output stream to print names/errors
- */
 void Familytree::printGrandChildrenN(const std::string &id, const int n, std::ostream &output) const
 {
     if(n<=0)
@@ -319,11 +272,6 @@ void Familytree::printGrandChildrenN(const std::string &id, const int n, std::os
     print_people(grandDad,output,person_point,"grandchildren","great-",n);
 }
 
-/* Desc: prints the great-*(n-1)grandparents of the given person
- * param0: the name of the person
- * param1: the amount of generations to go down (1=grandchildren, 2=great-grandchildren, etc)
- * param2: output stream to print names/errors
- */
 void Familytree::printGrandParentsN(const std::string &id, const int n, std::ostream &output) const
 {
     if(n<=0)
@@ -347,14 +295,6 @@ void Familytree::printGrandParentsN(const std::string &id, const int n, std::ost
     print_people(grandDad,output,person_point,"grandparents","great-",n);
 }
 
-/* Desc: gets the pointer that matches with the given id(name)
- * param0: name of the person we want to find
- * param1: the pointer well make point to the person we want
- *        if we cant find the person make point to nullptr
- *
- * return: returns if we find the given name (returns true)
- *        or if we dont find it (returns false)
- */
 bool Familytree::getPointer(const std::string &id, Person* &point) const
 {
     try
@@ -369,15 +309,6 @@ bool Familytree::getPointer(const std::string &id, Person* &point) const
     }
 }
 
-/* Desc: goes recursively levels "down" the family tree, and adds all the children of the people at that level
- *      to the people set.
- *
- * param0: how many levels we want to go "up" or "down" positive numbers go down the children, negative numbers go up the parents
- * param1: pointer to the guy whose family tree were looking at.
- * param2: set where we're gonna gather all the pointers to the people we want to find
- * param3: which group of people (parents or children) to add to the people set, determines which vector of person pointers is added
- *        once the levels hits 0.
- */
 void Familytree::get_recursive_level(int levels, Person *person, Personset &people, const std::vector<Person*> &people_to_add) const
 {
     // If we're at the level we want to be
@@ -422,15 +353,6 @@ void Familytree::get_recursive_level(int levels, Person *person, Personset &peop
     }
 }
 
-/* Desc: Figures out who is the shortest person starting from the person we're given
- * param0: person whose lineage/height we want to check
- * param1: shortest person we've found so far
- * param2: whether we're searching for the tallest (true) or shortest (false)
- * param3: which is the tallest/shortest generation so far, needed in order to make sure
- *        that were getting the person closest in the lineage to the person we begun to check
- * param4: default value of 1 (the person whose lineage we check is 0) makes sure we know which
- *        generation of kids were looking at, and is used to change height_gen when necessary
- */
 void Familytree::get_height(Person *person, Person *&height_person, compare comparator, int &height_gen, int current_gen) const
 {
     // Comparator is automatically the one we want since its provided as a parameter for this function. The other options is that the persons
@@ -452,14 +374,7 @@ void Familytree::get_height(Person *person, Person *&height_person, compare comp
     }
 }
 
-/* Desc: prints all the people in the set given according to the specifications given
- * param0: set of people we want to print
- * param1: output stream to print the people to
- * param2: the person whose relatives were printing out
- * param3: which relatives were printing out (ex. grandma, children, cousin, etc.)
- * param4: what suffix we want to use (used in printing grandchildren/parents, using the suffix "great-")
- * param5: how many generations away is this (used in printing grandchildren/parents
- */
+
 void Familytree::print_people(Personset &people, std::ostream &output, Person* &print_to, std::string what, std::string suffix, int amount) const
 {
     int suffix_amount=0;
@@ -504,10 +419,6 @@ void Familytree::print_people(Personset &people, std::ostream &output, Person* &
 
 }
 
-/* Desc: prints the no ID found error message
- * param0: the id/name of the person
- * param1: outputstream to print the message
- */
 void Familytree::print_no_id(std::string name, std::ostream &output) const
 {
    output<<"Error. "<<name<<" not found."<<std::endl;

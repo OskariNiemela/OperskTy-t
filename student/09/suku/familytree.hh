@@ -189,19 +189,52 @@ private:
      * to make things easier and to avoid "copy-paste-coding"
      */
 
-    // Return a pointer for ID.
+    /* Desc: gets the pointer that matches with the given id(name)
+     * param0: name of the person we want to find
+     * param1: the pointer well make point to the person we want
+     *        if we cant find the person make point to nullptr
+     *
+     * return: returns if we find the given name (returns true)
+     *        or if we dont find it (returns false)
+     */
     bool getPointer(const std::string& id, Person* &point) const;
 
-    // Goes "down" the family tree recursively and gathers all the people at the level we want into the people set
+    /* Desc: goes recursively levels "down" the family tree, and adds all the children of the people at that level
+     *      to the people set.
+     *
+     * param0: how many levels we want to go "up" or "down" positive numbers go down the children, negative numbers go up the parents
+     * param1: pointer to the guy whose family tree were looking at.
+     * param2: set where we're gonna gather all the pointers to the people we want to find
+     * param3: which group of people (parents or children) to add to the people set, determines which vector of person pointers is added
+     *        once the levels hits 0.
+     */
     void get_recursive_level(int levels, Person* person, Personset &people, const std::vector<Person *> &people_to_add) const;
 
-    // Finds the shortest or tallest person, based on the boolean provided
+    /* Desc: Figures out who is the shortest person starting from the person we're given
+     * param0: person whose lineage/height we want to check
+     * param1: shortest person we've found so far
+     * param2: whether we're searching for the tallest (true) or shortest (false)
+     * param3: which is the tallest/shortest generation so far, needed in order to make sure
+     *        that were getting the person closest in the lineage to the person we begun to check
+     * param4: default value of 1 (the person whose lineage we check is 0) makes sure we know which
+     *        generation of kids were looking at, and is used to change height_gen when necessary
+     */
     void get_height(Person* person, Person* &height_person, compare comparator, int &height_gen, int current_gen =1) const;
 
-    // prints the given set of people with the specifications given, such as what (children,parents,grandparents etc) and suffix (adds great- infront of
-    // grandparent/child as needed)
+    /* Desc: prints all the people in the set given according to the specifications given
+     * param0: set of people we want to print
+     * param1: output stream to print the people to
+     * param2: the person whose relatives were printing out
+     * param3: which relatives were printing out (ex. grandma, children, cousin, etc.)
+     * param4: what suffix we want to use (used in printing grandchildren/parents, using the suffix "great-")
+     * param5: how many generations away is this (used in printing grandchildren/parents
+     */
     void print_people(Personset &people, std::ostream &output, Person *&print_to, std::string what, std::string suffix="", int amount=0) const;
 
+    /* Desc: prints the no ID found error message
+     * param0: the id/name of the person
+     * param1: outputstream to print the message
+     */
     void print_no_id(std::string name,std::ostream &output) const;
 };
 
