@@ -8,9 +8,8 @@ Lista::Lista(): ensimmaisen_osoite_(nullptr), viimeisen_osoite_(nullptr) {
 }
 
 Lista::~Lista() {
-   Listan_alkio* vapautettavan_osoite;
    while ( ensimmaisen_osoite_ != nullptr ) {
-      vapautettavan_osoite = ensimmaisen_osoite_;
+      Listan_alkio* vapautettavan_osoite = ensimmaisen_osoite_;
       ensimmaisen_osoite_ = ensimmaisen_osoite_->seuraavan_osoite;
 
       delete vapautettavan_osoite;
