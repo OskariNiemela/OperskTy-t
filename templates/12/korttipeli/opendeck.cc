@@ -10,7 +10,6 @@ OpenDeck::OpenDeck(QWidget *parent):
     QFrame(parent),
     layout_(new QStackedLayout(this))
 {
-    //setAcceptDrops(true);
     setMinimumSize(180, 260);
     setMaximumSize(180, 260);
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
@@ -23,52 +22,6 @@ void OpenDeck::addCard(Card *card)
     layout_->setCurrentWidget(card);
     card->turn();
 
-}
-
-void OpenDeck::dragEnterEvent(QDragEnterEvent *event)
-{
-    if (event->mimeData()->hasFormat("image/card") && event->source() != this) {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-    } else {
-        event->ignore();
-    }
-}
-
-void OpenDeck::dragMoveEvent(QDragMoveEvent *event)
-{
-    if (event->mimeData()->hasFormat("image/card") && event->source() != this) {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-        event->acceptProposedAction();
-    } else {
-        event->ignore();
-    }
-}
-
-void OpenDeck::dropEvent(QDropEvent *event)
-{
-    if (event->mimeData()->hasFormat("image/card") ) {
-        QByteArray itemData = event->mimeData()->data("image/card");
-        QDataStream dataStream(&itemData, QIODevice::ReadOnly);
-        QPixmap pixmap;
-        QPoint offset;
-        dataStream >> pixmap >> offset;
-
-        auto deck =  static_cast<QFrame*>(event->source());
-        auto layout = static_cast<QStackedLayout*> (deck->layout());
-        QWidget* card = layout->currentWidget();
-        layout_->addWidget(card);
-        layout_->setCurrentWidget(card);
-        if (event->source() == this) {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-        } else {
-            event->acceptProposedAction();
-        }
-    } else {
-        event->ignore();
-    }
 }
 
 // Suoritetaan, kun avoimen pakan päällimmäinen kortti raahataan jonnekin.
