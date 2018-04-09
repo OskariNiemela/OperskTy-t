@@ -25,6 +25,8 @@ void OpenDeck::addCard(Card *card)
 
 }
 
+
+
 void OpenDeck::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("image/card") && event->source() != this) {

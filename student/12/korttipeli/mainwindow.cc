@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setupLayout();
     connect(deck_, &Deck::cardPicked, pickedCards_, &OpenDeck::addCard);
+    //connect(deck_, &Deck::fillDeck, pickedCards_, &OpenDeck::giveBack);
+    //connect(pickedCards_, &OpenDeck::giveBack, &Deck::addCard);
 }
 
 MainWindow::~MainWindow()
@@ -36,7 +38,22 @@ void MainWindow::setupLayout()
     topRowLayout->addWidget(deck_);
     topRowLayout->addWidget(pickedCards_);
 
+    Card* nu = deck_->pickCard();
     // ... ja alariville yksi cardslot.
+    CardSlot* slot1 = new CardSlot(&GameRules::checkIfSameSuit,this);
+    slot1->addCard(nu);
+
+    nu = deck_->pickCard();
+
+    CardSlot* slot2 = new CardSlot(&GameRules::checkIfSameSuit,this);
+
+    slot2->addCard(nu);
+
+    bottomRowLayout->addWidget(slot1);
+    bottomRowLayout->addWidget(slot2);
     bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
+    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
+    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
+
     setCentralWidget(frame);
 }

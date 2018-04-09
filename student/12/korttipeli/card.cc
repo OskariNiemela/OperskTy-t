@@ -176,6 +176,9 @@ void Card::setupFront()
     painter.setFont(font);
     painter.drawPixmap(frontPixmap.width()/2-suitPixmap_.width(), 5,
                        suitPixmap_, 0, 0, 0, 0);
+    painter.drawPixmap(frontPixmap.width()/2-suitPixmap_.width()/2,
+                       frontPixmap.height()-suitPixmap_.height()*1.2,
+                       suitPixmap_,0,0,0,0);
     painter.drawText(frontPixmap.width()/2, 0, suitPixmap_.width() + 5,
                      suitPixmap_.height() + 5, Qt::AlignCenter, QString::number(value_));
 

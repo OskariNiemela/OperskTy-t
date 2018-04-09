@@ -4,6 +4,7 @@
 #include <vector>
 #include <QFrame>
 #include "card.hh"
+#include <random>
 
 class Deck : public QFrame
 {
@@ -16,6 +17,8 @@ public:
     Card* pickCard();
 
     // TODO: Lisää tähän uusia toimintoja, joita korttipakalle voi suorittaa.
+
+
 
 signals:
     // Signaali, jonka pakka lähettää, kun kortti nostetaan.

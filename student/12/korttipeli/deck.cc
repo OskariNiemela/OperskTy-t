@@ -21,6 +21,7 @@ Deck::Deck(QWidget *parent) : QFrame(parent)
             cards_.push_back(card);
         }
     }
+    std::random_shuffle(cards_.begin(),cards_.end());
 }
 
 Card* Deck::pickCard()
@@ -57,3 +58,4 @@ void Deck::mousePressEvent(QMouseEvent *event)
     // Hyväksytään klikkaus, koska se käsitellään aina tässä metodissa.
     event->accept();
 }
+

@@ -6,6 +6,10 @@ namespace GameRules {
 
     // Tarkastusfunktio, joka varmistaa, että päälle laitetaan vain herttaa.
     bool checkIfHeart(std::string bottom, std::string top);
+
+    bool checkIfSpade(std::string bottom, std::string top);
+
+    bool checkIfSameSuit(std::string bottom, std::string top);
 }
 
 #endif // GAMERULES_HH
