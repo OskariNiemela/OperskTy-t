@@ -17,9 +17,6 @@ public:
 public slots:
     void addCard(Card* card);
 protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dropEvent(QDropEvent* event);
     void mousePressEvent(QMouseEvent *event);
 private:
     QStackedLayout* layout_;  // Sisältää ne kortti-widgetit, jotka avopakassa on.
