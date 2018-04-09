@@ -17,7 +17,7 @@ class OpenDeck : public QFrame
 {
 public:
     OpenDeck(QWidget* parent = 0);
-    void giveCards(std::vector<std::string> &cardVec);
+    void giveCards(std::vector<Card *> &cardVec);
 public slots:
     void addCard(Card* card);
 protected:

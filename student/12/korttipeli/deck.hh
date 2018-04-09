@@ -19,7 +19,7 @@ public:
     Card* pickCard();
 
     // TODO: Lisää tähän uusia toimintoja, joita korttipakalle voi suorittaa.
-    void takeCards(std::vector<std::string>& cards);
+    void takeCards(std::vector<Card *> &cards);
 
 
 

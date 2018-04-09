@@ -59,7 +59,7 @@ void MainWindow::setupLayout()
 
 void MainWindow::resetDeck()
 {
-    std::vector<std::string> newDeck;
+    std::vector<Card*> newDeck;
     pickedCards_->giveCards(newDeck);
     deck_->takeCards(newDeck);
 }

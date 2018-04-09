@@ -68,19 +68,17 @@ Card* Deck::pickCard()
     }
 }
 
-void Deck::takeCards(std::vector<std::string> &cards)
+void Deck::takeCards(std::vector<Card*> &cards)
 {
-    for(std::string card:cards)
-    {
-        std::vector<std::string> splitted = split(card,',');
-        std::string value = splitted.at(0);
-        std::string suit = splitted.at(1);
-        auto newCard = new Card(static_cast<CardSuit>(std::stoi(suit)), std::stoi(value), this);
-        int xOffset = (this->width() - newCard->width()) / 2;
-        int yOffset = (this->height() - newCard->height()) / 2;
-        newCard->move(xOffset, yOffset);
-        newCard->show();
-        cards_.push_back(newCard);
+    for(Card* card:cards)
+    { 
+        card->setParent(this);
+        int xOffset = (this->width() - card->width()) / 2;
+        int yOffset = (this->height() - card->height()) / 2;
+        cards_.push_back(card);
+        card->move(xOffset, yOffset);
+        card->turn();
+        card->show();
     }
 }
 

@@ -17,18 +17,15 @@ OpenDeck::OpenDeck(QWidget *parent):
     setLayout(layout_);
 }
 
-void OpenDeck::giveCards(std::vector<std::string> &cardVec)
+void OpenDeck::giveCards(std::vector<Card*> &cardVec)
 {
     Card *card = static_cast<Card*>(layout_->currentWidget());
-    std::string cardInfo;
     while(card!=nullptr)
     {
-        cardInfo = card->getCardData();
-        cardVec.push_back(cardInfo);
+        cardVec.push_back(card);
         layout_->removeWidget(layout_->currentWidget());
         layout_->setCurrentIndex(layout_->count()-1);
-        card->setAttribute(Qt::WA_DeleteOnClose);
-        card->close();
+
         card = static_cast<Card*>(layout_->currentWidget());
     }
 }
