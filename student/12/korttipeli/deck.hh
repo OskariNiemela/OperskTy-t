@@ -5,6 +5,8 @@
 #include <QFrame>
 #include "card.hh"
 #include <random>
+#include <iostream>
+#include <string>
 
 class Deck : public QFrame
 {
@@ -17,12 +19,14 @@ public:
     Card* pickCard();
 
     // TODO: Lisää tähän uusia toimintoja, joita korttipakalle voi suorittaa.
+    void takeCards(std::vector<std::string>& cards);
 
 
 
 signals:
     // Signaali, jonka pakka lähettää, kun kortti nostetaan.
     void cardPicked(Card* card);
+    void fillDeck();
 
 protected:
     // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.
@@ -31,6 +35,7 @@ protected:
 private:
     // Korttipakan sisältämät kortit.
     std::vector<Card*> cards_;
+    std::vector<std::string> split(std::string user_string, char separator,bool ignore_empty = true);
 };
 
 #endif // DECK_HH

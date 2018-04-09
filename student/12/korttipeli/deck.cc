@@ -6,6 +6,39 @@
 #include <QPainter>
 #include <QLabel>
 
+std::vector<std::string> Deck::split(std::string user_string, char separator,bool ignore_empty)
+{
+    std::size_t separator_index = user_string.find(separator);
+    std::vector<std::string> separated;
+    if(separator_index == std::string::npos)
+    {
+        separated.push_back(user_string);
+        return separated;
+    }
+
+    while(separator_index!=std::string::npos)
+    {
+        int substr_length = static_cast<int>(separator_index);
+        if(substr_length == 0){
+            if(not ignore_empty)
+            {
+                separated.push_back(user_string.substr(0,substr_length));
+            }
+        }else
+        {
+            separated.push_back(user_string.substr(0,substr_length));
+        }
+        substr_length++;
+        user_string.erase(0,substr_length);
+        separator_index = user_string.find(separator);
+
+    }
+    separated.push_back(user_string);
+    return separated ;
+}
+
+
+
 Deck::Deck(QWidget *parent) : QFrame(parent)
 {
     setMinimumSize(180, 260);
@@ -35,11 +68,28 @@ Card* Deck::pickCard()
     }
 }
 
+void Deck::takeCards(std::vector<std::string> &cards)
+{
+    for(std::string card:cards)
+    {
+        std::vector<std::string> splitted = split(card,',');
+        std::string value = splitted.at(0);
+        std::string suit = splitted.at(1);
+        auto newCard = new Card(static_cast<CardSuit>(std::stoi(suit)), std::stoi(value), this);
+        int xOffset = (this->width() - newCard->width()) / 2;
+        int yOffset = (this->height() - newCard->height()) / 2;
+        newCard->move(xOffset, yOffset);
+        newCard->show();
+        cards_.push_back(newCard);
+    }
+}
+
 // Suoritetaan, kun pakkaa klikataan.
 void Deck::mousePressEvent(QMouseEvent *event)
 {
     // Ohjelma ei saa kaatua tyhjän pakan klikkaukseen.
     if (cards_.empty()){
+        fillDeck();
         return;
     }
 

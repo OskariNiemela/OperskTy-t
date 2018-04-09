@@ -10,8 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setupLayout();
     connect(deck_, &Deck::cardPicked, pickedCards_, &OpenDeck::addCard);
-    //connect(deck_, &Deck::fillDeck, pickedCards_, &OpenDeck::giveBack);
-    //connect(pickedCards_, &OpenDeck::giveBack, &Deck::addCard);
+    connect(deck_, &Deck::fillDeck, this, &MainWindow::resetDeck);
 }
 
 MainWindow::~MainWindow()
@@ -56,4 +55,11 @@ void MainWindow::setupLayout()
     bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
 
     setCentralWidget(frame);
+}
+
+void MainWindow::resetDeck()
+{
+    std::vector<std::string> newDeck;
+    pickedCards_->giveCards(newDeck);
+    deck_->takeCards(newDeck);
 }
