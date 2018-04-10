@@ -19,7 +19,7 @@ class CardSlot: public QFrame
 {
 public:
     // Rakentaja ja metodi, jolla slotiin voidaan lisätä kortti.
-    CardSlot(CheckFunction function, QWidget* parent = 0);
+    CardSlot(CheckFunction function,bool adjustable, QWidget* parent = 0);
     void addCard(Card* card);
 
     // Itse toteutetut Qt:n widgetin raahaukseen liittyvät metodit.
@@ -37,7 +37,7 @@ private:
     // siihen, mitä tähän slotiin saa raahata. Muut kortit ovat vain tämän widgetin
     // lapsia, ja niihin päästään tarvittaessa käsiksi Qt:n parent-mekanismin avulla.
     Card* topCard_;
-
+    bool adjust;
     // Pelisääntöfunktio, joka määrittelee, mitä kortteja tähän widgettiin saa raahata.
     CheckFunction checkFunction_;
 };

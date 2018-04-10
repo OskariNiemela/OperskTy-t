@@ -39,10 +39,18 @@ void Card::allowOpen()
     canOpen_ = true;
 }
 
-void Card::stackCard(Card *card)
+void Card::stackCard(Card *card, bool adjustCoord)
 {
     card->setParent(this);
-    card->move(0, DEFAULT_STACK_OFFSET);
+    if(adjustCoord)
+    {
+        card->move(0, DEFAULT_STACK_OFFSET);
+    }
+    else
+    {
+        card->move(0,0);
+    }
+
 
     stackedCard_ = card;
     connect(stackedCard_, &Card::resized, this, &Card::expand);

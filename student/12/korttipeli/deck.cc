@@ -6,39 +6,6 @@
 #include <QPainter>
 #include <QLabel>
 
-std::vector<std::string> Deck::split(std::string user_string, char separator,bool ignore_empty)
-{
-    std::size_t separator_index = user_string.find(separator);
-    std::vector<std::string> separated;
-    if(separator_index == std::string::npos)
-    {
-        separated.push_back(user_string);
-        return separated;
-    }
-
-    while(separator_index!=std::string::npos)
-    {
-        int substr_length = static_cast<int>(separator_index);
-        if(substr_length == 0){
-            if(not ignore_empty)
-            {
-                separated.push_back(user_string.substr(0,substr_length));
-            }
-        }else
-        {
-            separated.push_back(user_string.substr(0,substr_length));
-        }
-        substr_length++;
-        user_string.erase(0,substr_length);
-        separator_index = user_string.find(separator);
-
-    }
-    separated.push_back(user_string);
-    return separated ;
-}
-
-
-
 Deck::Deck(QWidget *parent) : QFrame(parent)
 {
     setMinimumSize(180, 260);

@@ -7,14 +7,19 @@
 #include <QPainter>
 
 
-CardSlot::CardSlot(CheckFunction function, QWidget *parent):
-    QFrame(parent), topCard_(nullptr), checkFunction_(function)
+CardSlot::CardSlot(CheckFunction function, bool adjustable, QWidget *parent):
+    QFrame(parent), topCard_(nullptr), adjust(adjustable), checkFunction_(function)
 {
     // Tällä sallitaan asioiden tiputtaminen tähän widgettiin.
     setAcceptDrops(true);
-
     setMinimumSize(180, 260);
-    setMaximumWidth(180);
+    if(adjust){
+        setMaximumWidth(180);
+    }
+    else
+    {
+        setMaximumSize(180,260);
+    }
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
 }
@@ -210,7 +215,7 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
         topCard_ = newCards.front();
         newCards.pop_front();
         for (auto card: newCards){
-            topCard_->stackCard(card);
+            topCard_->stackCard(card,adjust);
             topCard_  = card;
             card->show();
         }
@@ -219,7 +224,7 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
     // Jos lisätään kortteja paikkaan, jossa on jo kortteja.
     else if(topCard_ != nullptr){
         for (auto card: newCards){
-            topCard_->stackCard(card);
+            topCard_->stackCard(card,adjust);
             topCard_  = card;
             card->show();
         }

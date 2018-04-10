@@ -39,20 +39,20 @@ void MainWindow::setupLayout()
 
     Card* nu = deck_->pickCard();
     // ... ja alariville yksi cardslot.
-    CardSlot* slot1 = new CardSlot(&GameRules::checkIfSameSuit,this);
+    CardSlot* slot1 = new CardSlot(&GameRules::checkIfSameSuit,true,this);
     slot1->addCard(nu);
 
     nu = deck_->pickCard();
 
-    CardSlot* slot2 = new CardSlot(&GameRules::checkIfSameSuit,this);
+    CardSlot* slot2 = new CardSlot(&GameRules::checkIfSameSuit,false,this);
 
     slot2->addCard(nu);
 
     bottomRowLayout->addWidget(slot1);
     bottomRowLayout->addWidget(slot2);
-    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
-    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
-    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart, this));
+    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart,true, this));
+    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart,true, this));
+    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart,true, this));
 
     setCentralWidget(frame);
 }

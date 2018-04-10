@@ -18,7 +18,7 @@ public:
     void allowOpen();
 
     // Kortin päällä olevien korttien käsittelemiseen.
-    void stackCard(Card* card);
+    void stackCard(Card* card, bool adjustCoord);
     void removeStackedCards();
 
     // Palauttaa kortin tiedot (arvo, maa, onko auki) merkkijonona. Tarvitaan
