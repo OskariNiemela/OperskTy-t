@@ -26,33 +26,30 @@ void MainWindow::setupLayout()
     // ... alarivin ja ylärivin.
     QHBoxLayout* bottomRowLayout = new QHBoxLayout();
     QHBoxLayout* topRowLayout = new QHBoxLayout();
+    QHBoxLayout* midRowLayout = new QHBoxLayout();
     frameLayout->addLayout(topRowLayout);
+    frameLayout->addLayout(midRowLayout);
     frameLayout->addLayout(bottomRowLayout);
 
     // Luodaan pakkaoliot.
     deck_ = new Deck(this);
     pickedCards_ = new OpenDeck(this);
-
-    // Lisätään yläriville suljettu ja avoin pakka...
-    topRowLayout->addWidget(deck_);
-    topRowLayout->addWidget(pickedCards_);
+    houseCards_ = new OpenDeck(this);
 
     Card* nu = deck_->pickCard();
-    // ... ja alariville yksi cardslot.
-    CardSlot* slot1 = new CardSlot(&GameRules::checkIfSameSuit,true,this);
-    slot1->addCard(nu);
+
+    pickedCards_->addCard(nu);
 
     nu = deck_->pickCard();
 
-    CardSlot* slot2 = new CardSlot(&GameRules::checkIfSameSuit,false,this);
+    houseCards_->addCard(nu);
 
-    slot2->addCard(nu);
+    // Lisätään yläriville suljettu ja avoin pakka...
+    topRowLayout->addWidget(houseCards_);
+    midRowLayout->addWidget(deck_);
+    bottomRowLayout->addWidget(pickedCards_);
 
-    bottomRowLayout->addWidget(slot1);
-    bottomRowLayout->addWidget(slot2);
-    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart,true, this));
-    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart,true, this));
-    bottomRowLayout->addWidget(new CardSlot(&GameRules::checkIfHeart,true, this));
+
 
     setCentralWidget(frame);
 }

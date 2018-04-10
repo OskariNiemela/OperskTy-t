@@ -24,6 +24,7 @@ private:
     // Ohjelmakoodipohjassa näitä ei käytetä mihinkään.
     Deck* deck_;
     OpenDeck* pickedCards_;
+    OpenDeck* houseCards_;
 };
 
 #endif // MAINWINDOW_HH
