@@ -44,9 +44,10 @@ void Deck::takeCards(std::vector<Card*> &cards)
         int yOffset = (this->height() - card->height()) / 2;
         cards_.push_back(card);
         card->move(xOffset, yOffset);
-        card->turn();
+        card->back();
         card->show();
     }
+    std::random_shuffle(cards_.begin(),cards_.end());
 }
 
 // Suoritetaan, kun pakkaa klikataan.

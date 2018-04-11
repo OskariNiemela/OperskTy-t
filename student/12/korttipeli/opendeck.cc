@@ -6,13 +6,15 @@
 #include <QPainter>
 #include <QLabel>
 
-OpenDeck::OpenDeck(QWidget *parent):
+OpenDeck::OpenDeck(Control control, QWidget *parent):
     QFrame(parent),
-    layout_(new QStackedLayout(this))
+    layout_(new QStackedLayout(this)),
+    isPlayer(control),
+    score(0)
 {
     //setAcceptDrops(true);
     setMinimumSize(180, 260);
-    setMaximumSize(180, 260);
+    setMaximumSize(180,260);
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
     setLayout(layout_);
 }
@@ -34,7 +36,15 @@ void OpenDeck::addCard(Card *card)
 {
     layout()->addWidget(card);
     layout_->setCurrentWidget(card);
-    card->turn();
+    card->open();
+    score += card->getScore();
+
+    emit scoreChange(score);
+
+    if((isPlayer == Player)&&(score>MAX_SCORE))
+    {
+        emit lose(true);
+    }
 
 }
 
@@ -135,4 +145,14 @@ void OpenDeck::mousePressEvent(QMouseEvent *event)
         card->show();
         card->getCurrentSideLabel()->setPixmap(pixmap);
     }
+}
+
+void OpenDeck::resetScore()
+{
+    score = 0;
+}
+
+unsigned OpenDeck::giveScore()
+{
+    return score;
 }

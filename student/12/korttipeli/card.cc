@@ -78,6 +78,11 @@ std::string Card::getCardData()
     return rVal;
 }
 
+unsigned Card::getScore()
+{
+    return value_;
+}
+
 QLabel* Card::getCurrentSideLabel()
 {
     if (open_){
@@ -105,6 +110,20 @@ void Card::expand()
 {
     setGeometry(x(), y(), width(), height() + DEFAULT_STACK_OFFSET);
     emit resized();
+}
+
+void Card::open()
+{
+    open_ = true;
+    findChild<QLabel*>(QString ("front"))->show();
+    findChild<QLabel*>(QString ("back"))->hide();
+}
+
+void Card::back()
+{
+    open_ = false;
+    findChild<QLabel*>(QString ("front"))->hide();
+    findChild<QLabel*>(QString ("back"))->show();
 }
 
 // Suoritetaan, kun widgettiä kaksoisklikataan.

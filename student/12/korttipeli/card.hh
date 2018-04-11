@@ -25,6 +25,9 @@ public:
     // kortin raahaamisessa.
     std::string getCardData();
 
+
+    unsigned getScore();
+
     // Kun korttia raahataan, raahaus-event tarvitsee kuvan, jota näytetään.
     // Sen saa haettua tällä metodilla.
     QLabel* getCurrentSideLabel();
@@ -38,6 +41,8 @@ public slots:
     // Lisää toimenpiteitä, joita kortille voidaan suorittaa.
     void turn();
     void expand();
+    void open();
+    void back();
 
 protected:
     // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.
