@@ -26,7 +26,7 @@ void CardSlot::addCard(Card *card)
         card->setParent(this);
     }
     else {
-        card->setParent(topCard_);
+        topCard_->stackCard(card);
     }
     topCard_= card;
     card->allowOpen();
