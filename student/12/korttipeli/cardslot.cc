@@ -48,7 +48,13 @@ void CardSlot::addCard(Card *card)
     topCard_= card;
     card->show();
     card->open();
+    int depth = 0;
+    bool win = function(nullptr,bottomCard_,depth);
 
+    if(win&&(depth==13))
+    {
+        emit wins();
+    }
 }
 
 void CardSlot::addCardClosed(Card *card)

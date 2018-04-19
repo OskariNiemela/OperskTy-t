@@ -30,6 +30,9 @@ public:
     ~MainWindow();
 
 public slots:
+    // The player has correctly stacked the cards and so has won the game
+    // disables the cardslots/deck and makes the win message come onto the screen
+    void playerWin();
     //Add cards to all the different cardslots
     void addCards();
 private:

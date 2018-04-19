@@ -28,11 +28,28 @@ MainWindow::MainWindow(QWidget *parent)
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setupLayout();
     connect(deck_, &Deck::cardPicked, this, &MainWindow::addCards);
+    for(CardSlot* slot:slots_)
+    {
+        connect(slot,&CardSlot::wins,this,&MainWindow::playerWin);
+    }
 
 }
 
 MainWindow::~MainWindow()
 {
+
+}
+
+void MainWindow::playerWin()
+{
+    // Disable the cardslots and the closed deck
+    for(CardSlot* slot:slots_)
+    {
+        slot->setEnabled(false);
+    }
+    deck_->setEnabled(false);
+
+    winLabel_->setText("YOU WIN");
 
 }
 
