@@ -1,3 +1,16 @@
+/*
+ * TIE-02200 Ohjelmoinnin peruskurssi
+ * Project: Korttipeli
+ * File: gamerules.hh
+ * Coder: Oskari Niemela
+ * Student Number: 263440
+ *
+ * Desc:
+ *
+ * Notes:
+ *      Assistants made the file originally I just made the
+ *      one rule function.
+*/
 #ifndef MAINWINDOW_HH
 #define MAINWINDOW_HH
 
@@ -5,6 +18,7 @@
 #include "deck.hh"
 #include "opendeck.hh"
 #include "gamerules.hh"
+#include "cardslot.hh"
 #include <QPushButton>
 
 class MainWindow : public QMainWindow
@@ -16,28 +30,17 @@ public:
     ~MainWindow();
 
 public slots:
-    void resetDeck();
-    void newGame();
-    void scorePlayer(unsigned score);
-    void scoreHouse(unsigned score);
-    void checkWin();
-    void playerLose();
-    void houseLose();
-
+    //Add cards to all the different cardslots
+    void addCards();
 private:
     void setupLayout();
-
 
     // Talletetaan attribuuteiksi ne widgetit, joita saattaa tarvita käsitellä pelin aikana.
     // Ohjelmakoodipohjassa näitä ei käytetä mihinkään.
     Deck* deck_;
-    OpenDeck* pickedCards_;
-    OpenDeck* houseCards_;
+    std::vector<CardSlot*> slots_;
 
-    QPushButton* startGame_;
-    QPushButton* stay_;
-    QLabel* playerPoints_;
-    QLabel* housePoints_;
+    QLabel* winLabel_;
 };
 
 #endif // MAINWINDOW_HH

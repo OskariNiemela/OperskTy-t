@@ -1,3 +1,5 @@
+// FILE NOT USED IN THE PROJECT
+
 #ifndef OPENDECK_HH
 #define OPENDECK_HH
 #include <QFrame>

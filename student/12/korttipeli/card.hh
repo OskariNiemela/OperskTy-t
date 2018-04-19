@@ -1,3 +1,12 @@
+/*
+ * TIE-02200 Ohjelmoinnin Peruskurssi
+ * Project: Korttipeli
+ * Project Coder: Oskari Niemela
+ * Student Number: 263440
+ * File: card.hh
+ *
+*/
+
 #ifndef CARD_HH
 #define CARD_HH
 
@@ -18,12 +27,19 @@ public:
     void allowOpen();
 
     // Kortin päällä olevien korttien käsittelemiseen.
-    void stackCard(Card* card, bool adjustCoord);
+    void stackCard(Card* card);
     void removeStackedCards();
 
     // Palauttaa kortin tiedot (arvo, maa, onko auki) merkkijonona. Tarvitaan
     // kortin raahaamisessa.
     std::string getCardData();
+
+
+    bool checkWin(Card* previous,int cardCount);
+
+    CardSuit getSuit();
+    unsigned getValue();
+    Card* getStacked();
 
 
     unsigned getScore();

@@ -1,3 +1,18 @@
+/*
+ * TIE-02200 Ohjelmoinnin peruskurssi
+ * Project: Korttipeli
+ * File: gamerules.hh
+ * Coder: Oskari Niemela
+ * Student Number: 263440
+ *
+ * Desc:
+ *      Contains the code for the CardSlot class
+ *
+ * Notes:
+ *      Assistants made the file originally I
+ *      changed/added methods
+*/
+
 #include "cardslot.hh"
 
 #include <iostream>
@@ -7,19 +22,15 @@
 #include <QPainter>
 
 
-CardSlot::CardSlot(CheckFunction function, bool adjustable, QWidget *parent):
-    QFrame(parent), topCard_(nullptr), adjust(adjustable), checkFunction_(function)
+CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent):
+    QFrame(parent), topCard_(nullptr),bottomCard_(nullptr),function(checkFunction)
 {
     // Tällä sallitaan asioiden tiputtaminen tähän widgettiin.
     setAcceptDrops(true);
     setMinimumSize(180, 260);
-    if(adjust){
-        setMaximumWidth(180);
-    }
-    else
-    {
-        setMaximumSize(180,260);
-    }
+    setMaximumWidth(180);
+
+
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
 }
@@ -28,10 +39,27 @@ CardSlot::CardSlot(CheckFunction function, bool adjustable, QWidget *parent):
 void CardSlot::addCard(Card *card)
 {
     if (topCard_ == nullptr){
+        bottomCard_=card;
+        card->setParent(this);
+    }
+    else {
+        topCard_->stackCard(card);
+    }
+    topCard_= card;
+    card->show();
+    card->open();
+
+}
+
+void CardSlot::addCardClosed(Card *card)
+{
+    if (topCard_ == nullptr){
+        bottomCard_=card;
         card->setParent(this);
     }
     else {
         card->setParent(topCard_);
+        topCard_->stackCard(card);
     }
     topCard_= card;
     card->allowOpen();
@@ -89,19 +117,13 @@ void CardSlot::dropEvent(QDropEvent *event)
             existingCardsData.append("");
         }
 
-        // Tarkastetaan checkFunction_ -osoittimen päässä olevaa funktiota käyttäen, onko
-        // pudotus sallittu pelisääntöjen mukaan.
-        if(checkFunction_(existingCardsData.back().toStdString(), newCardsData.back().toStdString())){
-            // Jos pudotus halutaan hyväksyä, lisätään raahatut kortit tähän slotiin.
-            std::list<Card*> newCards;
-            parseNewCards(newCards, newCardsData);
-            setupNewCards(newCards);
-            event->acceptProposedAction();
-        }
-        else {
-            // Jos pudotusta ei haluta hyväksyä, niin se hylätään näin.
-            event->ignore();
-        }
+
+        // Jos pudotus halutaan hyväksyä, lisätään raahatut kortit tähän slotiin.
+        std::list<Card*> newCards;
+        parseNewCards(newCards, newCardsData);
+        setupNewCards(newCards);
+        event->acceptProposedAction();
+
     } else {
         event->ignore();
     }
@@ -164,6 +186,7 @@ void CardSlot::mousePressEvent(QMouseEvent *event)
         if (card->parent() == this){
             // Jos poistettu kortti oli pohjimmainen
             topCard_ = nullptr;
+            bottomCard_=nullptr;
         } else {
             // Jos korttipaikkaan jäi vielä kortteja, poistetaan poistuneet kortit
             topCard_ = static_cast<Card*>(card->parent());
@@ -208,14 +231,16 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
     // Jos lisätään vain yksi kortti tyhjään paikkaan
     if (topCard_ == nullptr && newCards.size() == 1) {
         topCard_ = newCards.front();
+        bottomCard_ = newCards.front();
     }
 
     // Jos lisätään useampia kortteja tyhjään paikkaan
     else if(topCard_ == nullptr && newCards.size() > 1) {
         topCard_ = newCards.front();
+        bottomCard_ = newCards.front();
         newCards.pop_front();
         for (auto card: newCards){
-            topCard_->stackCard(card,adjust);
+            topCard_->stackCard(card);
             topCard_  = card;
             card->show();
         }
@@ -224,9 +249,20 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
     // Jos lisätään kortteja paikkaan, jossa on jo kortteja.
     else if(topCard_ != nullptr){
         for (auto card: newCards){
-            topCard_->stackCard(card,adjust);
+            topCard_->stackCard(card);
             topCard_  = card;
             card->show();
         }
     }
+    int depth = 0;
+    bool win = function(nullptr,bottomCard_,depth);
+
+    if(win&&(depth==13))
+    {
+        emit wins();
+    }
 }
+
+
+
+

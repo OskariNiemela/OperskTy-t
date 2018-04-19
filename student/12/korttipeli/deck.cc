@@ -1,3 +1,17 @@
+/*
+ * TIE-02200 Ohjelmoinnin peruskurssi
+ * Project: Korttipeli
+ * File: gamerules.hh
+ * Coder: Oskari Niemela
+ * Student Number: 263440
+ *
+ * Desc:
+ *
+ * Notes:
+ *      Assistants made the file originally I just changed
+ *      some methods.
+*/
+
 #include "deck.hh"
 
 #include <QDrag>
@@ -35,41 +49,17 @@ Card* Deck::pickCard()
     }
 }
 
-void Deck::takeCards(std::vector<Card*> &cards)
-{
-    for(Card* card:cards)
-    { 
-        card->setParent(this);
-        int xOffset = (this->width() - card->width()) / 2;
-        int yOffset = (this->height() - card->height()) / 2;
-        cards_.push_back(card);
-        card->move(xOffset, yOffset);
-        card->back();
-        card->show();
-    }
-    std::random_shuffle(cards_.begin(),cards_.end());
-}
 
 // Suoritetaan, kun pakkaa klikataan.
 void Deck::mousePressEvent(QMouseEvent *event)
 {
     // Ohjelma ei saa kaatua tyhjän pakan klikkaukseen.
     if (cards_.empty()){
-        fillDeck();
-        return;
-    }
-
-    // Otetaan osoittimen päähän pakan päällimmäinen kortti ja poistetaan se pakasta.
-    Card* card = cards_.back();
-    cards_.pop_back();
-
-    // Ohjelma ei saa kaatua, jos korttia ei olekaan.
-    if (!card){
         return;
     }
 
     // Ilmoitetaan, että pakasta otettiin kortti.
-    emit cardPicked(card);
+    emit cardPicked();
 
     // Hyväksytään klikkaus, koska se käsitellään aina tässä metodissa.
     event->accept();

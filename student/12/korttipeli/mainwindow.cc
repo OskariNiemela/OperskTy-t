@@ -1,3 +1,20 @@
+/*
+ * TIE-02200 Ohjelmoinnin peruskurssi
+ * Project: Korttipeli
+ * File: gamerules.hh
+ * Coder: Oskari Niemela
+ * Student Number: 263440
+ *
+ * Desc:
+ *      Contains the code for building the MainWindow
+ *      plus some methods used for distributing cards
+ *      and doing the things we need to do when we win.
+ *
+ * Notes:
+ *      Assistants made the file originally I just made the
+ *      one rule function.
+*/
+
 #include <QFrame>
 #include <QHBoxLayout>
 
@@ -10,16 +27,31 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setupLayout();
-    connect(deck_, &Deck::cardPicked, pickedCards_, &OpenDeck::addCard);
-    connect(startGame_, SIGNAL(clicked(bool)),this,SLOT(newGame()));
-    connect(stay_, SIGNAL(clicked(bool)),this, SLOT(checkWin()));
-    connect(pickedCards_,&OpenDeck::scoreChange, this,&MainWindow::scorePlayer);
-    connect(pickedCards_,&OpenDeck::lose,this,&MainWindow::checkWin);
-    connect(houseCards_,&OpenDeck::scoreChange,this,&MainWindow::scoreHouse);
+    connect(deck_, &Deck::cardPicked, this, &MainWindow::addCards);
+
 }
 
 MainWindow::~MainWindow()
 {
+
+}
+
+void MainWindow::addCards()
+{
+    Card* nu = nullptr;
+    for(CardSlot* slot:slots_)
+    {
+        nu = deck_->pickCard();
+        if(nu==nullptr)
+        {
+            break;
+        }
+        else
+        {
+            slot->addCard(nu);
+        }
+
+    }
 }
 
 void MainWindow::setupLayout()
@@ -36,117 +68,39 @@ void MainWindow::setupLayout()
     frameLayout->addLayout(midRowLayout);
     frameLayout->addLayout(bottomRowLayout);
 
-    // Luodaan pakkaoliot.
+    // Luodaan pakkaolio.
     deck_ = new Deck(this);
-    pickedCards_ = new OpenDeck(Player,this);
-    houseCards_ = new OpenDeck(House,this);
+    for(int i=0;i<7;i++)
+    {
+        CardSlot* bo = new CardSlot(&GameRules::checkWin,this);
+        slots_.push_back(bo);
+    }
 
-    stay_ = new QPushButton(this);
-    startGame_ = new QPushButton(this);
-    playerPoints_ = new QLabel(this);
-    housePoints_ = new QLabel(this);
+    winLabel_ = new QLabel(this);
 
-    deck_->setEnabled(false);
-    stay_->setEnabled(false);
+    winLabel_->setMinimumSize(100,50);
+    winLabel_->setMaximumSize(100,50);
 
-    // Lisätään yläriville suljettu ja avoin pakka...
-    topRowLayout->addWidget(houseCards_);
-    topRowLayout->addWidget(housePoints_);
-    midRowLayout->addWidget(deck_);
-    midRowLayout->addWidget(stay_);
-    midRowLayout->addWidget(startGame_);
-    bottomRowLayout->addWidget(pickedCards_);
-    bottomRowLayout->addWidget(playerPoints_);
+    // How many cards at most do we give a cardslot at the beginning
+    int cards = 7;
+    Card* boi = nullptr;
+    for(CardSlot* go:slots_)
+    {
+        for(int i=0;i<cards;i++)
+        {
+            boi = deck_->pickCard();
+            go->addCardClosed(boi);
+        }
+        cards--;
+    }
+
+    topRowLayout->addWidget(deck_);
+    topRowLayout->addWidget(winLabel_);
+    for(CardSlot* slot:slots_)
+    {
+        bottomRowLayout->addWidget(slot);
+    }
+
 
     setCentralWidget(frame);
-}
-
-void MainWindow::resetDeck()
-{
-    std::vector<Card*> newDeck;
-    pickedCards_->giveCards(newDeck);
-    houseCards_->giveCards(newDeck);
-    deck_->takeCards(newDeck);
-}
-
-void MainWindow::newGame()
-{
-
-    resetDeck();
-
-    playerPoints_->setText("0");
-    housePoints_->setText("0");
-    pickedCards_->resetScore();
-    houseCards_->resetScore();
-
-    Card* nu = deck_->pickCard();
-
-    pickedCards_->addCard(nu);
-
-    nu = deck_->pickCard();
-
-    houseCards_->addCard(nu);
-
-    deck_->setEnabled(true);
-    stay_->setEnabled(true);
-    startGame_->setEnabled(false);
-
-}
-
-void MainWindow::scorePlayer(unsigned score)
-{
-    playerPoints_->setText(QString::number(score));
-}
-
-void MainWindow::scoreHouse(unsigned score)
-{
-    housePoints_->setText(QString::number(score));
-}
-
-void MainWindow::playerLose()
-{
-    playerPoints_->setText("House Wins");
-}
-
-void MainWindow::houseLose()
-{
-    playerPoints_->setText("Player Wins");
-}
-void MainWindow::checkWin()
-{
-    stay_->setEnabled(false);
-    startGame_->setEnabled(true);
-    deck_->setEnabled(false);
-
-    unsigned playerScore = pickedCards_->giveScore();
-
-    if(playerScore>MAX_SCORE)
-    {
-        playerLose();
-        return;
-    }
-
-    unsigned houseScore = houseCards_->giveScore();
-    Card* nu = deck_->pickCard();
-    while((houseScore<19)&&(houseScore<playerScore))
-    {
-        houseCards_->addCard(nu);
-        houseScore = houseCards_->giveScore();
-    }
-
-    if(houseScore>MAX_SCORE)
-    {
-        houseLose();
-        return;
-    }
-
-    if(playerScore>houseScore)
-    {
-        houseLose();
-    }
-    else
-    {
-        playerLose();
-    }
-
 }

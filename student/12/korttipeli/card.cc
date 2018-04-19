@@ -1,3 +1,18 @@
+/*
+ * TIE-02200 Ohjelmoinnin Peruskurssi
+ * Project: Korttipeli
+ * Project Coder: Oskari Niemela
+ * Student Number: 263440
+ * File: card.cc
+ *
+ * Desc:
+ *      Contains all the code for the Card class
+ *
+ * Notes:
+ *      Assistants originally created this file,
+ *      I only changed/added certain methods
+*/
+
 #include <QPainter>
 #include <QMouseEvent>
 #include <QSizePolicy>
@@ -39,17 +54,12 @@ void Card::allowOpen()
     canOpen_ = true;
 }
 
-void Card::stackCard(Card *card, bool adjustCoord)
+void Card::stackCard(Card *card)
 {
     card->setParent(this);
-    if(adjustCoord)
-    {
-        card->move(0, DEFAULT_STACK_OFFSET);
-    }
-    else
-    {
-        card->move(0,0);
-    }
+
+    card->move(0, DEFAULT_STACK_OFFSET);
+
 
 
     stackedCard_ = card;
@@ -76,6 +86,22 @@ std::string Card::getCardData()
             std::to_string(open_)
             ;
     return rVal;
+}
+
+
+CardSuit Card::getSuit()
+{
+    return suit_;
+}
+
+unsigned Card::getValue()
+{
+    return value_;
+}
+
+Card* Card::getStacked()
+{
+    return stackedCard_;
 }
 
 unsigned Card::getScore()
@@ -129,7 +155,7 @@ void Card::back()
 // Suoritetaan, kun widgettiä kaksoisklikataan.
 void Card::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if(canOpen_){
+    if(canOpen_&&(stackedCard_==nullptr)){
         turn();
         event->accept();
     }

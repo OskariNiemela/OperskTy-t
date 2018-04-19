@@ -1,3 +1,17 @@
+/*
+ * TIE-02200 Ohjelmoinnin Peruskurssi
+ * Project: Korttipeli
+ * Project Coder: Oskari Niemela
+ * Student Number: 263440
+ * File; deck.hh
+ *
+ * Notes:
+ *      Assistants made the file originally I just modified
+ *      the cardPicked signal
+*/
+
+
+
 #ifndef DECK_HH
 #define DECK_HH
 
@@ -16,13 +30,9 @@ public:
     // Korttipakasta voi nostaa päällimmäisen kortin.
     Card* pickCard();
 
-    // TODO: Lisää tähän uusia toimintoja, joita korttipakalle voi suorittaa.
-    void takeCards(std::vector<Card *> &cards);
-
 signals:
     // Signaali, jonka pakka lähettää, kun kortti nostetaan.
-    void cardPicked(Card* card);
-    void fillDeck();
+    void cardPicked();
 
 protected:
     // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.
