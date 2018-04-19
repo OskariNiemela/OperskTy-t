@@ -1,0 +1,2 @@
+Yhden pelaajan pasianssi, kun pakkaa klikataan kaikkiin seitsemään cardslottiin lisätään yksi kortti.
+Pelin idea on saada yhteen cardslottiin yhden maan kortit järjestyksessä kolmestatoista yhteen
