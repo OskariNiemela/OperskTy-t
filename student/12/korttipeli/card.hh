@@ -58,7 +58,6 @@ public slots:
     void turn();
     void expand();
     void open();
-    void back();
 
 protected:
     // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.

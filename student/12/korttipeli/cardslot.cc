@@ -36,7 +36,7 @@ CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent):
 }
 
 // Kortin lisääminen cardslotiin.
-void CardSlot::addCard(Card *card)
+void CardSlot::addCard(Card *card, bool open)
 {
     if (topCard_ == nullptr){
         bottomCard_=card;
@@ -45,30 +45,22 @@ void CardSlot::addCard(Card *card)
     else {
         topCard_->stackCard(card);
     }
+    if(open)
+    {
+        card->open();
+        int depth = 0;
+        bool win = function(nullptr,bottomCard_,depth);
+
+        if(win&&(depth==13))
+        {
+            emit wins();
+        }
+    }
+
     topCard_= card;
     card->show();
-    card->open();
-    int depth = 0;
-    bool win = function(nullptr,bottomCard_,depth);
-
-    if(win&&(depth==13))
-    {
-        emit wins();
-    }
-}
-
-void CardSlot::addCardClosed(Card *card)
-{
-    if (topCard_ == nullptr){
-        bottomCard_=card;
-        card->setParent(this);
-    }
-    else {
-        card->setParent(topCard_);
-        topCard_->stackCard(card);
-    }
-    topCard_= card;
     card->allowOpen();
+
 }
 
 // Suoritetaan, kun jotakin raahataan tämän CardSlotin päälle.
@@ -202,6 +194,18 @@ void CardSlot::mousePressEvent(QMouseEvent *event)
         card->setParent(nullptr);
         card->setAttribute(Qt::WA_DeleteOnClose);
         card->close();
+
+        if(bottomCard_!=nullptr)
+        {
+            int depth = 0;
+            bool win = function(nullptr,bottomCard_,depth);
+
+            if(win&&(depth==13))
+            {
+                emit wins();
+            }
+        }
+
     } else {
         // Tämä suoritetaan, jos raahaus epäonnistui.
         card->getCurrentSideLabel()->setPixmap(pixmap);

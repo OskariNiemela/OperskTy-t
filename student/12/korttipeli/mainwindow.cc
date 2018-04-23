@@ -87,10 +87,11 @@ void MainWindow::setupLayout()
 
     // Luodaan pakkaolio.
     deck_ = new Deck(this);
+
     for(int i=0;i<7;i++)
     {
-        CardSlot* bo = new CardSlot(&GameRules::checkWin,this);
-        slots_.push_back(bo);
+        CardSlot* cardSlot = new CardSlot(&GameRules::checkWin,this);
+        slots_.push_back(cardSlot);
     }
 
     winLabel_ = new QLabel(this);
@@ -100,13 +101,13 @@ void MainWindow::setupLayout()
 
     // How many cards at most do we give a cardslot at the beginning
     int cards = 7;
-    Card* boi = nullptr;
-    for(CardSlot* go:slots_)
+    Card* card = nullptr;
+    for(CardSlot* slot:slots_)
     {
         for(int i=0;i<cards;i++)
         {
-            boi = deck_->pickCard();
-            go->addCardClosed(boi);
+            card = deck_->pickCard();
+            slot->addCard(card,false);
         }
         cards--;
     }

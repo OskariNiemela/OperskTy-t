@@ -39,7 +39,7 @@ public:
     // Rakentaja ja metodi, jolla slotiin voidaan lisätä kortti.
     CardSlot(CheckFunction checkFunction, QWidget* parent = 0);
     // Adds a card normally to the cardslot
-    void addCard(Card* card);
+    void addCard(Card* card,bool open=true);
     // Adds a card but keeps it face down.
     void addCardClosed(Card* card);
 

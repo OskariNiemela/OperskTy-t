@@ -138,18 +138,12 @@ void Card::expand()
     emit resized();
 }
 
+// Open the card
 void Card::open()
 {
     open_ = true;
     findChild<QLabel*>(QString ("front"))->show();
     findChild<QLabel*>(QString ("back"))->hide();
-}
-
-void Card::back()
-{
-    open_ = false;
-    findChild<QLabel*>(QString ("front"))->hide();
-    findChild<QLabel*>(QString ("back"))->show();
 }
 
 // Suoritetaan, kun widgettiä kaksoisklikataan.
