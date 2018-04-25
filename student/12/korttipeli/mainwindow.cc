@@ -10,9 +10,6 @@
  *      plus some methods used for distributing cards
  *      and doing the things we need to do when we win.
  *
- * Notes:
- *      Assistants made the file originally I just made the
- *      one rule function.
 */
 
 #include <QFrame>
@@ -27,48 +24,68 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setupLayout();
-    connect(deck_, &Deck::cardPicked, this, &MainWindow::addCards);
-    for(CardSlot* slot:slots_)
+    connect(deck_, &Deck::cardPicked, pickedCards_, &OpenDeck::addCard);
+    connect(deck_,&Deck::refillDeck,this,&MainWindow::refillDeck);
+    for(CardSlot* slot:winSlots_)
     {
-        connect(slot,&CardSlot::wins,this,&MainWindow::playerWin);
+        connect(slot,&CardSlot::wins,this,&MainWindow::landComplete);
     }
 
 }
 
 MainWindow::~MainWindow()
 {
+    for(CardSlot* slot:slots_)
+    {
+        delete slot;
+    }
 
+    for(CardSlot* winSlot:winSlots_)
+    {
+        delete winSlot;
+    }
+
+    delete winLabel_;
+    delete pickedCards_;
+    delete deck_;
 }
 
 void MainWindow::playerWin()
 {
-    // Disable the cardslots and the closed deck
+    // Disable the cardslots and the closed/open deck
     for(CardSlot* slot:slots_)
     {
         slot->setEnabled(false);
     }
+
+    for(CardSlot* winSlot:winSlots_)
+    {
+        winSlot->setEnabled(false);
+    }
+    pickedCards_->setEnabled(false);
     deck_->setEnabled(false);
 
     winLabel_->setText("YOU WIN");
 
 }
 
-void MainWindow::addCards()
+void MainWindow::refillDeck()
 {
-    Card* nu = nullptr;
-    for(CardSlot* slot:slots_)
-    {
-        nu = deck_->pickCard();
-        if(nu==nullptr)
-        {
-            break;
-        }
-        else
-        {
-            slot->addCard(nu);
-        }
+    std::vector<Card*> cards;
+    pickedCards_->giveCards(cards);
 
-    }
+    deck_->getCards(cards);
+
+}
+
+void MainWindow::landComplete()
+{
+       lands_++;
+
+       if(lands_>=4)
+       {
+           playerWin();
+       }
 }
 
 void MainWindow::setupLayout()
@@ -80,9 +97,7 @@ void MainWindow::setupLayout()
     // ... alarivin ja ylärivin.
     QHBoxLayout* bottomRowLayout = new QHBoxLayout();
     QHBoxLayout* topRowLayout = new QHBoxLayout();
-    QHBoxLayout* midRowLayout = new QHBoxLayout();
     frameLayout->addLayout(topRowLayout);
-    frameLayout->addLayout(midRowLayout);
     frameLayout->addLayout(bottomRowLayout);
 
     // Luodaan pakkaolio.
@@ -90,8 +105,18 @@ void MainWindow::setupLayout()
 
     for(int i=0;i<7;i++)
     {
-        CardSlot* cardSlot = new CardSlot(&GameRules::checkWin,this);
+        CardSlot* cardSlot = new CardSlot(&GameRules::checkDiffColour,this);
         slots_.push_back(cardSlot);
+    }
+
+
+    pickedCards_ = new OpenDeck(this);
+
+
+    for(int i=0;i<4;i++)
+    {
+        CardSlot* winSlot = new CardSlot(&GameRules::checkSameLandPlus,this,false,true);
+        winSlots_.push_back(winSlot);
     }
 
     winLabel_ = new QLabel(this);
@@ -113,12 +138,20 @@ void MainWindow::setupLayout()
     }
 
     topRowLayout->addWidget(deck_);
+    topRowLayout->addWidget(pickedCards_);
+
     topRowLayout->addWidget(winLabel_);
+
+    for(CardSlot* slot:winSlots_)
+    {
+        topRowLayout->addWidget(slot);
+    }
+
     for(CardSlot* slot:slots_)
     {
         bottomRowLayout->addWidget(slot);
     }
 
-
+    lands_ = 0;
     setCentralWidget(frame);
 }

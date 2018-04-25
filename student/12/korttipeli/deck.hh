@@ -5,12 +5,9 @@
  * Student Number: 263440
  * File; deck.hh
  *
- * Notes:
- *      Assistants made the file originally I just modified
- *      the cardPicked signal
+ * Desc:
+ *      header file for the deck class which houses all the unpicked cards.
 */
-
-
 
 #ifndef DECK_HH
 #define DECK_HH
@@ -30,9 +27,14 @@ public:
     // Korttipakasta voi nostaa päällimmäisen kortin.
     Card* pickCard();
 
+    // Take back the cards that are in the vector of cards
+    void getCards(std::vector<Card *> &cards);
+
 signals:
     // Signaali, jonka pakka lähettää, kun kortti nostetaan.
-    void cardPicked();
+    void cardPicked(Card*);
+    // send the signal to refill the deck from the cards that are in the opendeck
+    void refillDeck();
 
 protected:
     // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.

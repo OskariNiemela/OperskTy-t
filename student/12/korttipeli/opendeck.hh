@@ -1,4 +1,14 @@
-// FILE NOT USED IN THE PROJECT
+/*
+ * TIE-02200 Ohjelmoinnin peruskurssi
+ * Project: Korttipeli
+ * File: gamerules.hh
+ * Coder: Oskari Niemela
+ * Student Number: 263440
+ *
+ * Desc:
+ *      header file for the opendeck class,
+ *
+*/
 
 #ifndef OPENDECK_HH
 #define OPENDECK_HH
@@ -6,7 +16,6 @@
 
 unsigned const MAX_SCORE = 21;
 
-enum Control {Player,House};
 
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
@@ -24,15 +33,12 @@ class OpenDeck : public QFrame
     Q_OBJECT
 
 public:
-    OpenDeck(Control control, QWidget* parent = 0);
+    OpenDeck(QWidget* parent = 0);
     void giveCards(std::vector<Card *> &cardVec);
-    void resetScore();
-    unsigned giveScore();
+
 public slots:
     void addCard(Card* card);
-signals:
-    void scoreChange(unsigned cardScore);
-    void lose(bool player);
+
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
@@ -40,8 +46,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 private:
     QStackedLayout* layout_;  // Sisältää ne kortti-widgetit, jotka avopakassa on.
-    Control isPlayer;
-    unsigned score;
+
 };
 
 #endif // OPENDECK_HH

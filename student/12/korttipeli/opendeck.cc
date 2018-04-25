@@ -1,4 +1,16 @@
-// NOT USED IN THIS PROJECT
+/*
+ * TIE-02200 Ohjelmoinnin peruskurssi
+ * Project: Korttipeli
+ * File: opendeck.cc
+ * Coder: Oskari Niemela
+ * Student Number: 263440
+ *
+ * Desc:
+ *      Contains code for the opendeck class that we use as the deck
+ *      you drag cards from to the cardslots.
+ *
+*/
+
 #include "opendeck.hh"
 
 #include <QDrag>
@@ -7,11 +19,9 @@
 #include <QPainter>
 #include <QLabel>
 
-OpenDeck::OpenDeck(Control control, QWidget *parent):
+OpenDeck::OpenDeck( QWidget *parent):
     QFrame(parent),
-    layout_(new QStackedLayout(this)),
-    isPlayer(control),
-    score(0)
+    layout_(new QStackedLayout(this))
 {
     //setAcceptDrops(true);
     setMinimumSize(180, 260);
@@ -38,15 +48,6 @@ void OpenDeck::addCard(Card *card)
     layout()->addWidget(card);
     layout_->setCurrentWidget(card);
     card->open();
-    score += card->getScore();
-
-    emit scoreChange(score);
-
-    if((isPlayer == Player)&&(score>MAX_SCORE))
-    {
-        emit lose(true);
-    }
-
 }
 
 void OpenDeck::dragEnterEvent(QDragEnterEvent *event)
@@ -146,14 +147,4 @@ void OpenDeck::mousePressEvent(QMouseEvent *event)
         card->show();
         card->getCurrentSideLabel()->setPixmap(pixmap);
     }
-}
-
-void OpenDeck::resetScore()
-{
-    score = 0;
-}
-
-unsigned OpenDeck::giveScore()
-{
-    return score;
 }

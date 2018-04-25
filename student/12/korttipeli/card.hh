@@ -5,6 +5,8 @@
  * Student Number: 263440
  * File: card.hh
  *
+ * Desc:
+ *      header file for the card class
 */
 
 #ifndef CARD_HH
@@ -27,22 +29,15 @@ public:
     void allowOpen();
 
     // Kortin päällä olevien korttien käsittelemiseen.
-    void stackCard(Card* card);
+
+    // 1st param is the card we wish to stack, 2nd param whether or not
+    // we want the widget borders to be adjusted.
+    void stackCard(Card* card,bool adjustBorder=true);
     void removeStackedCards();
 
     // Palauttaa kortin tiedot (arvo, maa, onko auki) merkkijonona. Tarvitaan
     // kortin raahaamisessa.
     std::string getCardData();
-
-
-    bool checkWin(Card* previous,int cardCount);
-
-    CardSuit getSuit();
-    unsigned getValue();
-    Card* getStacked();
-
-
-    unsigned getScore();
 
     // Kun korttia raahataan, raahaus-event tarvitsee kuvan, jota näytetään.
     // Sen saa haettua tällä metodilla.

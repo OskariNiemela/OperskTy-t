@@ -6,11 +6,8 @@
  * File: card.cc
  *
  * Desc:
- *      Contains all the code for the Card class
+ *      Contains all the code for the Card class.
  *
- * Notes:
- *      Assistants originally created this file,
- *      I only changed/added certain methods
 */
 
 #include <QPainter>
@@ -54,17 +51,25 @@ void Card::allowOpen()
     canOpen_ = true;
 }
 
-void Card::stackCard(Card *card)
+void Card::stackCard(Card *card, bool adjustBorder)
 {
     card->setParent(this);
 
-    card->move(0, DEFAULT_STACK_OFFSET);
-
-
-
-    stackedCard_ = card;
-    connect(stackedCard_, &Card::resized, this, &Card::expand);
-    expand();
+    //if we adjust the border, then tweak the position of the card
+    // were about to stack and also expand our borders
+    if (adjustBorder)
+    {
+        card->move(0, DEFAULT_STACK_OFFSET);
+        stackedCard_ = card;
+        connect(stackedCard_, &Card::resized, this, &Card::expand);
+        expand();
+    }
+    else
+    {
+        // return the stacked cards position back to normal
+        card->move(0,0);
+        stackedCard_ = card;
+    }
 
 }
 
@@ -86,27 +91,6 @@ std::string Card::getCardData()
             std::to_string(open_)
             ;
     return rVal;
-}
-
-
-CardSuit Card::getSuit()
-{
-    return suit_;
-}
-
-unsigned Card::getValue()
-{
-    return value_;
-}
-
-Card* Card::getStacked()
-{
-    return stackedCard_;
-}
-
-unsigned Card::getScore()
-{
-    return value_;
 }
 
 QLabel* Card::getCurrentSideLabel()

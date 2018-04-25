@@ -1,2 +1,5 @@
-Yhden pelaajan pasianssi, kun pakkaa klikataan kaikkiin seitsemään cardslottiin lisätään yksi kortti.
-Pelin idea on saada yhteen cardslottiin yhden maan kortit järjestyksessä kolmestatoista yhteen
+Yhden pelaajan pasianssi, neljään ylempään cardslottiin (sijaitsevat pakkojen oikealla) tulee saada yhden maan kaikki kortit 1->13 järjestyksessä, sloteilla ei ole maita alussa, vaan maaksi tulee ensimmäinen kortti minkä lisää siihen cardslottiin.
+
+Alemmissa cardsloteissa ainoastaan erivärisiä kortteja voidaan laittaa päälekkäin, eli mustia punaisien päälle ja punaisia mustien päälle.
+
+Pakasta voi nostaa kortteja ja avoimesta pakasta raahata kortteja mihin tahansa cardslottiin. Jos pakasta loppuu kortit voi sen täyttää uudelleen painamalla tyhjää pakkaa, jolloin avoimen pakan kortit siirtyvät pakalle.

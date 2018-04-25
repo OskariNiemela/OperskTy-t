@@ -8,9 +8,6 @@
  * Desc:
  *      Contains the code for the CardSlot class
  *
- * Notes:
- *      Assistants made the file originally I
- *      changed/added methods
 */
 
 #include "cardslot.hh"
@@ -22,14 +19,21 @@
 #include <QPainter>
 
 
-CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent):
-    QFrame(parent), topCard_(nullptr),bottomCard_(nullptr),function(checkFunction)
+CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent, bool adjustable, bool oneAtATime):
+    QFrame(parent), topCard_(nullptr),adjust_(adjustable), oneCard_(oneAtATime),function(checkFunction)
 {
     // Tällä sallitaan asioiden tiputtaminen tähän widgettiin.
     setAcceptDrops(true);
     setMinimumSize(180, 260);
-    setMaximumWidth(180);
+    if(adjust_)
+    {
+        setMaximumWidth(180);
 
+    }
+    else
+    {
+        setMaximumSize(180,260);
+    }
 
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
@@ -39,22 +43,14 @@ CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent):
 void CardSlot::addCard(Card *card, bool open)
 {
     if (topCard_ == nullptr){
-        bottomCard_=card;
         card->setParent(this);
     }
     else {
-        topCard_->stackCard(card);
+        topCard_->stackCard(card,adjust_);
     }
     if(open)
     {
         card->open();
-        int depth = 0;
-        bool win = function(nullptr,bottomCard_,depth);
-
-        if(win&&(depth==13))
-        {
-            emit wins();
-        }
     }
 
     topCard_= card;
@@ -107,6 +103,12 @@ void CardSlot::dropEvent(QDropEvent *event)
         // Pyydetään eventiltä tiedot siitä, mitä kortteja ollaan pudottamassa.
         QStringList newCardsData = event->mimeData()->text().split(";");
 
+        if((newCardsData.size()>1)&&(oneCard_))
+        {
+            event->ignore();
+            return;
+        }
+
         // Muodostetaan QStringList-olio, johon tulevat tiedot slotissa olevista korteista.
         QStringList existingCardsData;
         if (topCard_ != nullptr){
@@ -115,12 +117,24 @@ void CardSlot::dropEvent(QDropEvent *event)
             existingCardsData.append("");
         }
 
+        int topVal=0;
+        if(function(existingCardsData.back().toStdString(), newCardsData.back().toStdString(),topVal)){
+            // Jos pudotus halutaan hyväksyä, lisätään raahatut kortit tähän slotiin.
+            std::list<Card*> newCards;
+            parseNewCards(newCards, newCardsData);
+            setupNewCards(newCards);
+            event->acceptProposedAction();
+            if((oneCard_)&&(topVal==13))
+            {
+                emit wins();
+                this->setEnabled(false);
 
-        // Jos pudotus halutaan hyväksyä, lisätään raahatut kortit tähän slotiin.
-        std::list<Card*> newCards;
-        parseNewCards(newCards, newCardsData);
-        setupNewCards(newCards);
-        event->acceptProposedAction();
+            }
+        }
+        else
+        {
+            event->ignore();
+        }
 
     } else {
         event->ignore();
@@ -184,7 +198,6 @@ void CardSlot::mousePressEvent(QMouseEvent *event)
         if (card->parent() == this){
             // Jos poistettu kortti oli pohjimmainen
             topCard_ = nullptr;
-            bottomCard_=nullptr;
         } else {
             // Jos korttipaikkaan jäi vielä kortteja, poistetaan poistuneet kortit
             topCard_ = static_cast<Card*>(card->parent());
@@ -194,17 +207,6 @@ void CardSlot::mousePressEvent(QMouseEvent *event)
         card->setParent(nullptr);
         card->setAttribute(Qt::WA_DeleteOnClose);
         card->close();
-
-        if(bottomCard_!=nullptr)
-        {
-            int depth = 0;
-            bool win = function(nullptr,bottomCard_,depth);
-
-            if(win&&(depth==13))
-            {
-                emit wins();
-            }
-        }
 
     } else {
         // Tämä suoritetaan, jos raahaus epäonnistui.
@@ -241,16 +243,14 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
     // Jos lisätään vain yksi kortti tyhjään paikkaan
     if (topCard_ == nullptr && newCards.size() == 1) {
         topCard_ = newCards.front();
-        bottomCard_ = newCards.front();
     }
 
     // Jos lisätään useampia kortteja tyhjään paikkaan
     else if(topCard_ == nullptr && newCards.size() > 1) {
         topCard_ = newCards.front();
-        bottomCard_ = newCards.front();
         newCards.pop_front();
         for (auto card: newCards){
-            topCard_->stackCard(card);
+            topCard_->stackCard(card,adjust_);
             topCard_  = card;
             card->show();
         }
@@ -259,18 +259,12 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
     // Jos lisätään kortteja paikkaan, jossa on jo kortteja.
     else if(topCard_ != nullptr){
         for (auto card: newCards){
-            topCard_->stackCard(card);
+            topCard_->stackCard(card,adjust_);
             topCard_  = card;
             card->show();
         }
     }
-    int depth = 0;
-    bool win = function(nullptr,bottomCard_,depth);
 
-    if(win&&(depth==13))
-    {
-        emit wins();
-    }
 }
 
 

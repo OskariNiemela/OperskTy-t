@@ -7,9 +7,6 @@
  *
  * Desc:
  *
- * Notes:
- *      Assistants made the file originally I just changed
- *      some methods.
 */
 
 #include "deck.hh"
@@ -49,17 +46,41 @@ Card* Deck::pickCard()
     }
 }
 
+void Deck::getCards(std::vector<Card *> &cards)
+{
+    for(Card* card:cards)
+      {
+          card->setParent(this);
+          int xOffset = (this->width() - card->width()) / 2;
+          int yOffset = (this->height() - card->height()) / 2;
+          cards_.push_back(card);
+          card->move(xOffset, yOffset);
+          card->turn();
+          card->show();
+      }
+
+}
+
 
 // Suoritetaan, kun pakkaa klikataan.
 void Deck::mousePressEvent(QMouseEvent *event)
 {
     // Ohjelma ei saa kaatua tyhjän pakan klikkaukseen.
     if (cards_.empty()){
+        emit refillDeck();
+        return;
+    }
+
+    Card* card = cards_.back();
+    cards_.pop_back();
+
+    if(!card)
+    {
         return;
     }
 
     // Ilmoitetaan, että pakasta otettiin kortti.
-    emit cardPicked();
+    emit cardPicked(card);
 
     // Hyväksytään klikkaus, koska se käsitellään aina tässä metodissa.
     event->accept();
