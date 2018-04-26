@@ -45,7 +45,7 @@ protected:
     void dropEvent(QDropEvent* event);
     void mousePressEvent(QMouseEvent *event);
 private:
-    QStackedLayout* layout_;  // Sisältää ne kortti-widgetit, jotka avopakassa on.
+    QStackedLayout* layout_;  // Contains the card widgets that this deck contains.
 
 };
 

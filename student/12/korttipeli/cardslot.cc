@@ -22,7 +22,7 @@
 CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent, bool adjustable, bool oneAtATime):
     QFrame(parent), topCard_(nullptr),adjust_(adjustable), oneCard_(oneAtATime),function(checkFunction)
 {
-    // Tällä sallitaan asioiden tiputtaminen tähän widgettiin.
+    // Allow for things to be dropped into this widget
     setAcceptDrops(true);
     setMinimumSize(180, 260);
     if(adjust_)
@@ -39,7 +39,7 @@ CardSlot::CardSlot(CheckFunction checkFunction, QWidget *parent, bool adjustable
 
 }
 
-// Kortin lisääminen cardslotiin.
+// Add a card into the widget
 void CardSlot::addCard(Card *card, bool open)
 {
     if (topCard_ == nullptr){
@@ -59,12 +59,9 @@ void CardSlot::addCard(Card *card, bool open)
 
 }
 
-// Suoritetaan, kun jotakin raahataan tämän CardSlotin päälle.
+// Is executed when something is dragged ontop of this slot
 void CardSlot::dragEnterEvent(QDragEnterEvent *event)
 {
-    // Jos haluat testailla ohjelmaa niin, että näet konsolista, koska tämä
-    // suoritetaan, poista kommenttimerkit seuraavalta riviltä.
-    //std::cout << "CardSlot::dragEnterEvent" << std::endl;
 
     if (event->mimeData()->hasFormat("text/plain")) {
         event->setDropAction(Qt::MoveAction);
@@ -75,7 +72,8 @@ void CardSlot::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-// Suoritetaan, kun jotakin liikutetaan tämän CardSlotin rajojen sisällä.
+// Is executed when something is dragged while already inside
+// the slot
 void CardSlot::dragMoveEvent(QDragMoveEvent *event)
 {
     if (event->mimeData()->hasFormat("text/plain")) {
@@ -86,30 +84,24 @@ void CardSlot::dragMoveEvent(QDragMoveEvent *event)
     }
 }
 
-// Suoritetaan, kun jotain pudotetaan cardslotiin (raahauksen päättyessä).
+// Executed when something is dropped into this slot
 void CardSlot::dropEvent(QDropEvent *event)
 {
-    // Tarkastetaan, onko sisältääkö pudotettu elementti tekstiä (korttidataa) ja
-    // onko raahauksen aloituspaikka eri kuin pudotuspaikka.
+    // Check that the format of the information the event contains is valid
+    // and that the source of the dragging isnt this slot.
     if (event->mimeData()->hasFormat("text/plain") && event->source() != this ) {
 
-        // Cardslotilla on funktio-osoitin checkFunction_, jonka osoittama funktio
-        // tarkastaa, voiko pelisääntöjen mukaan pudotettavan/t kortin/t pudottaa slotiin.
-        // Ko. funktiolle annetaan parametrina kaksi stringiä, joista ensimmäinen
-        // sisältää korttipaikassa päälimmäisenä olevan kortin tiedot ja toinen
-        // lisättävistä korteista sen tiedot, joka olisi tulossa päälimmäisenä
-        // olevan kortin päälle.
-
-        // Pyydetään eventiltä tiedot siitä, mitä kortteja ollaan pudottamassa.
+        // Request information about the cards being dropped
         QStringList newCardsData = event->mimeData()->text().split(";");
 
+        // If we only accept one card then check if there are more than one cards being dragged into this slot
         if((newCardsData.size()>1)&&(oneCard_))
         {
             event->ignore();
             return;
         }
 
-        // Muodostetaan QStringList-olio, johon tulevat tiedot slotissa olevista korteista.
+        // get the info from the cards already in the slot
         QStringList existingCardsData;
         if (topCard_ != nullptr){
             existingCardsData = QString::fromStdString(topCard_->getCardData()).split(";");
@@ -119,7 +111,7 @@ void CardSlot::dropEvent(QDropEvent *event)
 
         int topVal=0;
         if(function(existingCardsData.back().toStdString(), newCardsData.back().toStdString(),topVal)){
-            // Jos pudotus halutaan hyväksyä, lisätään raahatut kortit tähän slotiin.
+            // if the drop is valid
             std::list<Card*> newCards;
             parseNewCards(newCards, newCardsData);
             setupNewCards(newCards);
@@ -141,47 +133,39 @@ void CardSlot::dropEvent(QDropEvent *event)
     }
 }
 
-// Suoritetaan, kun cardslotia klikataan (eli raahauksen alkaessa).
+// Executed when clicking the cardslot
 void CardSlot::mousePressEvent(QMouseEvent *event)
 {
-    // 1) Metodin alkuosa suoritetaan, kun cardslotia klikataan.
 
-    // Tämä estää ohjelmaa kaatumasta, kun tyhjää widgettiä klikataan.
+    // Stops the program from crashing when clicking an empty slot
     if (!childAt(event->pos()) || topCard_ == nullptr){
         return;
     }
 
-    // Otetaan osoittimen päähän se kortti, jonka kohdalla klikkaus-event suoritettiin.
+    // Take the card that was clicked and point a pointer to it
     Card* card = dynamic_cast<Card*>(childAt(event->pos())->parent());
     if (!card){
-        return;  // Jos klikkauskohdassa ei ole korttia, lopetetaan.
+        return;  // If no card was found do nothing.
     }
     if (!card->isOpen()){
-        return;  // Jos kyseinen kortti on suljettuna, ei klikatessa tehdä mitään.
+        return;  // If the card is closed do nothing.
     }
 
-    // Talletetaan muuttujaan kortin kuva.
+    // Save the picture of the card
     QPixmap pixmap = *card->getCurrentSideLabel()->pixmap();
 
-    // Muodostetaan kortista QMimeData-olio, jonka sisällöksi laitetaan kortin
-    // tekstimuotoinen esitys.
+    // Make an object to store the card data
     QMimeData *mimeData = new QMimeData;
     mimeData->setText(QString::fromStdString(card->getCardData()));
 
-    // Muodostetaan uusi raahaus-event, johon laitetaan edellä tallennetut tiedot.
+    // Create a drag event which will be provided with the card info and picture
     QDrag *drag = new QDrag(this);
     drag->setMimeData(mimeData);
     drag->setPixmap(pixmap);
 
-    // Tässä määritellään miten kortista napataan kiinni.
     drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
-    // Tämä ei ole olennaisinta sisältöä, mutta jos haluat tutkia hotspotin ideaa,
-    // voit kokeilla korvata edellisen rivin jollakin seuraavista:
-    // drag->setHotSpot();
-    // drag->setHotSpot(event->pos());
-    // drag->setHotSpot(event->pos() - card->pos());
 
-    // Asetetaan harmautettu korttikuva väliaikaiseksi korttikuvaksi raahaamisen ajaksi.
+
     QPixmap tempPixmap = pixmap;
     QPainter painter;
     painter.begin(&tempPixmap);
@@ -189,36 +173,35 @@ void CardSlot::mousePressEvent(QMouseEvent *event)
     painter.end();
     card->getCurrentSideLabel()->setPixmap(tempPixmap);
 
-    // 2) Aloitetaan raahaus ja tarkastellaa onnistuiko.
 
     if (drag->exec( Qt::MoveAction) == Qt::MoveAction) {
-        // Tämä suoritetaan, jos raahaus onnistui.
+        //If the drag was successful
         card->getCurrentSideLabel()->setPixmap(pixmap);
 
         if (card->parent() == this){
-            // Jos poistettu kortti oli pohjimmainen
+            // If the dragged card was the bottom one
             topCard_ = nullptr;
         } else {
-            // Jos korttipaikkaan jäi vielä kortteja, poistetaan poistuneet kortit
+            // Remove the cards that were dragged off
             topCard_ = static_cast<Card*>(card->parent());
             topCard_->removeStackedCards();
         }
-        // Poistetaan kortti ja sen päällä mahdollisesti olleet kortit.
+        // delete the card that was dragged and any children it may have had
         card->setParent(nullptr);
         card->setAttribute(Qt::WA_DeleteOnClose);
         card->close();
 
     } else {
-        // Tämä suoritetaan, jos raahaus epäonnistui.
+        // If the dragging failed
         card->getCurrentSideLabel()->setPixmap(pixmap);
         card->show();
     }
 }
 
-// Apumetodi, jota CardSlot::dropEvent kutsuu korttidatan jäsentämiseksi.
+// Parses the new card data into actual cards
 void CardSlot::parseNewCards(std::list<Card *> &newCards, QStringList &newCardsData)
 {
-    // Jäsennetään korttien data ja luodaan sitä vastaavat uudet kortit.
+    // Parse the data and create cards corrresponding to the data
     for (QString cardData: newCardsData){
         QStringList splitted =  cardData.remove(";").split(",");
         if(splitted.isEmpty()){
@@ -236,16 +219,16 @@ void CardSlot::parseNewCards(std::list<Card *> &newCards, QStringList &newCardsD
     }
 }
 
-// Apumetodi, jota CardSlot::dropEvent kutsuu uusien korttien asettelemiseksi.
+// Sets the newcards in their correct positions
 void CardSlot::setupNewCards(std::list<Card *> &newCards)
 {
-    // Asetellaan uudet, luodut kortit sen mukaan, mitä kortteja korttipaikalla oli jo.
-    // Jos lisätään vain yksi kortti tyhjään paikkaan
+
+    // If were adding one card into an empty slot
     if (topCard_ == nullptr && newCards.size() == 1) {
         topCard_ = newCards.front();
     }
 
-    // Jos lisätään useampia kortteja tyhjään paikkaan
+    // If were adding more than one card into an empty slot
     else if(topCard_ == nullptr && newCards.size() > 1) {
         topCard_ = newCards.front();
         newCards.pop_front();
@@ -256,7 +239,7 @@ void CardSlot::setupNewCards(std::list<Card *> &newCards)
         }
     }
 
-    // Jos lisätään kortteja paikkaan, jossa on jo kortteja.
+    // If were adding cards into a slot with cards present
     else if(topCard_ != nullptr){
         for (auto card: newCards){
             topCard_->stackCard(card,adjust_);

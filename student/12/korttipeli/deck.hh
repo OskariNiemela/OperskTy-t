@@ -24,24 +24,24 @@ class Deck : public QFrame
 public:
     Deck(QWidget *parent = 0);
 
-    // Korttipakasta voi nostaa päällimmäisen kortin.
+    // You can pick the top card of the deck.
     Card* pickCard();
 
     // Take back the cards that are in the vector of cards
     void getCards(std::vector<Card *> &cards);
 
 signals:
-    // Signaali, jonka pakka lähettää, kun kortti nostetaan.
+    // The signal that is sent when a card is picked.
     void cardPicked(Card*);
     // send the signal to refill the deck from the cards that are in the opendeck
     void refillDeck();
 
 protected:
-    // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.
+    // A method pertaining to the clicking of the deck
     void mousePressEvent(QMouseEvent *event);
 
 private:
-    // Korttipakan sisältämät kortit.
+    // The cards in the deck
     std::vector<Card*> cards_;
 };
 

@@ -45,8 +45,8 @@ private:
     void playerWin();
 
 
-    // Talletetaan attribuuteiksi ne widgetit, joita saattaa tarvita käsitellä pelin aikana.
-    // Ohjelmakoodipohjassa näitä ei käytetä mihinkään.
+    // Save the widgets that we might need to access/manipulate
+    // during the game as pointers
     Deck* deck_;
     OpenDeck* pickedCards_;
     std::vector<CardSlot*> slots_;

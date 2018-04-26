@@ -62,11 +62,12 @@ void Deck::getCards(std::vector<Card *> &cards)
 }
 
 
-// Suoritetaan, kun pakkaa klikataan.
+// If the deck is clicked
 void Deck::mousePressEvent(QMouseEvent *event)
 {
-    // Ohjelma ei saa kaatua tyhjän pakan klikkaukseen.
+    // the program cant crash when clicking an empty deck
     if (cards_.empty()){
+        // send out the signal to refill the deck if possible
         emit refillDeck();
         return;
     }
@@ -79,10 +80,10 @@ void Deck::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    // Ilmoitetaan, että pakasta otettiin kortti.
+    // Inform the opendeck that we've picked a card
     emit cardPicked(card);
 
-    // Hyväksytään klikkaus, koska se käsitellään aina tässä metodissa.
+    // Accept the clicking event
     event->accept();
 }
 

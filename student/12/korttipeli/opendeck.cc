@@ -96,35 +96,35 @@ void OpenDeck::dropEvent(QDropEvent *event)
     }
 }
 
-// Suoritetaan, kun avoimen pakan päällimmäinen kortti raahataan jonnekin.
+// Is executed when the open deck is clicked/when dragging cards
 void OpenDeck::mousePressEvent(QMouseEvent *event)
 {
-    // 1) Metodin alkuosa suoritetaan, kun avopakkaa klikataan.
 
-    // Otetaan pakan sisältämä kortti osoittimen päähän.
+    // Take the card thats ontop of our layout and point a pointer to it
     Card *card = static_cast<Card*>(layout_->currentWidget());
 
-    // Tyhjästä pakasta ei voi raahata, eli lopetetaan.
+    // We cant drag anything from an empty deck
     if (card == nullptr){
         return;
     }
 
-    // Otetaan raahattavan kortin kuva valmiiksi muuttujaan pixmap.
+    // take the image of the card into pixmap
     QPixmap pixmap = *card->getCurrentSideLabel()->pixmap();
 
-    // Luodaan mimeData-olio, jonka avulla raahattavan kortin tiedot (=merkkijono)
-    // välitetään sinne, minne kortti raahataan.
+    // create a MimeData object which will contain all the data of the card
+    // this will be provided to the slot were dragging the cards into.
     QMimeData *mimeData = new QMimeData;
     mimeData->setText(QString::fromStdString(card->getCardData()));
 
-    // Luodaan drag-olio, jonka avulla raahaaminen tapahtuu. Drag-oliolle annetaan
-    // raahauksen aikana näytettävä kuva, sekä tiedot raahattavasta oliosta.
+    // Create a drag object which will actually do the draggging motion
+    // it will be provided with the picture of the card and its data
     QDrag *drag = new QDrag(this);
     drag->setMimeData(mimeData);
     drag->setPixmap(pixmap);
-    drag->setHotSpot(event->pos() - card->pos());  // Se kohta raahattavasta kuvasta, jonka pitää osua kohteeseen.
+    drag->setHotSpot(event->pos() - card->pos());
 
-    // Asetetaan harmautettu korttikuva väliaikaiseksi korttikuvaksi raahaamisen ajaksi.
+    // Put the picture of the card were dragging into grayscale for the duration
+    // of the drag.
     QPixmap tempPixmap = pixmap;
     QPainter painter;
     painter.begin(&tempPixmap);
@@ -132,10 +132,10 @@ void OpenDeck::mousePressEvent(QMouseEvent *event)
     painter.end();
     card->getCurrentSideLabel()->setPixmap(tempPixmap);
 
-    // 2) Aloitetaan raahaus ja tarkastellaa onnistuiko.
+    // Begin the dragging and see if its successful
 
     if (drag->exec( Qt::MoveAction) == Qt::MoveAction) {
-        // Tämä suoritetaan, jos raahaus onnistui.
+        // This will be executed if the drag was successful
         card->getCurrentSideLabel()->setPixmap(pixmap);
         layout_->removeWidget(layout_->currentWidget());
         layout_->setCurrentIndex(layout_->count()-1);
@@ -143,7 +143,7 @@ void OpenDeck::mousePressEvent(QMouseEvent *event)
         card->close();
 
     } else {
-        // Tämä suoritetaan, jos raahaus epäonnistui.
+        // If the drag was unsuccessful
         card->show();
         card->getCurrentSideLabel()->setPixmap(pixmap);
     }

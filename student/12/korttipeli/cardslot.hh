@@ -36,13 +36,13 @@ class CardSlot: public QFrame
     Q_OBJECT
 
 public:
-    // Rakentaja ja metodi, jolla slotiin voidaan lisätä kortti.
+
     CardSlot(CheckFunction checkFunction, QWidget* parent = 0, bool adjustable = true, bool oneAtATime=false);
     // Adds a card normally to the cardslot, 1st param is the card we need to add
     // 2nd param is whether to open the card that were adding.
     void addCard(Card* card,bool open=true);
 
-    // Itse toteutetut Qt:n widgetin raahaukseen liittyvät metodit.
+    // Methods pertaingin to the dragging of cards
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
@@ -53,19 +53,17 @@ signals:
     void wins();
 
 private:
-    // Apumetodeita dropEventin käyttöön.
+    // Helpful methods for the dragging events
     void parseNewCards(std::list<Card*>& newCards, QStringList& newCardsData);
     void setupNewCards(std::list<Card*>& newCards);
 
-    // Päällimmäisenä oleva kortti on talletettu attribuutiksi, koska se vaikuttaa
-    // siihen, mitä tähän slotiin saa raahata. Muut kortit ovat vain tämän widgetin
-    // lapsia, ja niihin päästään tarvittaessa käsiksi Qt:n parent-mekanismin avulla.
+    // The topcard
     Card* topCard_;
     // Whether or not to adjust the borders when resizing window.
     bool adjust_;
     // Whether or not this cardslot only takes one card at a time.
     bool oneCard_;
-    // Pelisääntöfunktio, joka määrittelee, mitä kortteja tähän widgettiin saa raahata.
+    // Function that defines the rule with which cards can be added to the slot
     CheckFunction function;
 };
 

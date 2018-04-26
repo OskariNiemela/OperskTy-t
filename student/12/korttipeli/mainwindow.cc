@@ -90,17 +90,17 @@ void MainWindow::landComplete()
 
 void MainWindow::setupLayout()
 {
-    // Pääikkunan isoimpana rakenteena on frame, joka sisältää...
+    // The largest structure in the mainwindow is a frame that contains..
     QFrame* frame = new QFrame;
     QVBoxLayout* frameLayout = new QVBoxLayout(frame);
 
-    // ... alarivin ja ylärivin.
+    // ... a top- and bottomrow.
     QHBoxLayout* bottomRowLayout = new QHBoxLayout();
     QHBoxLayout* topRowLayout = new QHBoxLayout();
     frameLayout->addLayout(topRowLayout);
     frameLayout->addLayout(bottomRowLayout);
 
-    // Luodaan pakkaolio.
+    // Create the deck object
     deck_ = new Deck(this);
 
     for(int i=0;i<7;i++)

@@ -24,58 +24,57 @@ class Card : public QFrame
 public:
     Card(CardSuit suit, unsigned value, QWidget *parent = 0);
 
-    // Kortin sisäisen tilan tarkastelemiseen ja muokkaamiseen.
+    // For observing and modifying the internal state of the card
     bool isOpen();
     void allowOpen();
 
-    // Kortin päällä olevien korttien käsittelemiseen.
+    // Used when stacking cards o
 
     // 1st param is the card we wish to stack, 2nd param whether or not
     // we want the widget borders to be adjusted.
     void stackCard(Card* card,bool adjustBorder=true);
     void removeStackedCards();
 
-    // Palauttaa kortin tiedot (arvo, maa, onko auki) merkkijonona. Tarvitaan
-    // kortin raahaamisessa.
+    // Returns the information of the card and all the cards ontop
+    // (value,land,open)
     std::string getCardData();
 
-    // Kun korttia raahataan, raahaus-event tarvitsee kuvan, jota näytetään.
-    // Sen saa haettua tällä metodilla.
+    // When dragging a card we need the picture of it so we know
+    // which one is being dragged
     QLabel* getCurrentSideLabel();
 
 signals:
-    // Kun kortin päälle (tai sen päällä olevien korttien päällä olevien korttien
-    // päälle) lisätään kortti, tarvii piirrettävän widgetin kokoa kasvattaa.
+    // For resizing a cards borders when adding a card ontop of it
     void resized();
 
 public slots:
-    // Lisää toimenpiteitä, joita kortille voidaan suorittaa.
+    // More procedures we can do with the card
     void turn();
     void expand();
     void open();
 
 protected:
-    // Itse toteutettu Qt:n widgetin klikkaamiseen liittyvä metodi.
+    // Methdo for when the card is double clicked
     void mouseDoubleClickEvent(QMouseEvent* event);
 
 private:
-    // Apumetodeita muiden metodien käyttöön.
+    // Helpful methods for the other methods to use
     void setupLayout();
     void setSuitPixmap();
     void setupBack();
     void setupFront();
 
-    // Korttiwidgetin sisäinen tila.
+    // The internal state of the card
     CardSuit suit_;
     unsigned value_;
     bool open_;
     bool canOpen_;
 
-    // Kuvat joita tarvitaan, kun korttia piirretään setupBack- ja setupFront-metodeissa.
+    // The front and back pictures for the card
     QPixmap suitPixmap_;
     QPixmap backPixmap_;
 
-    // Osoitin kortin päällä mahdollisesti olevaan korttiin.
+    // A pointer to the possible card stacked ontop of this one
     Card* stackedCard_;
 };
 

@@ -102,7 +102,7 @@ QLabel* Card::getCurrentSideLabel()
     }
 }
 
-// Käännetään kortti ympäri.
+// Turn the card around
 void Card::turn()
 {
     open_ = !open_;
@@ -115,14 +115,14 @@ void Card::turn()
     }
 }
 
-// Kasvatetaan widgetin piirtoalueen kokoa.
+// increase the size of the drawing border
 void Card::expand()
 {
     setGeometry(x(), y(), width(), height() + DEFAULT_STACK_OFFSET);
     emit resized();
 }
 
-// Open the card
+// Open the card face up.
 void Card::open()
 {
     open_ = true;
@@ -130,7 +130,7 @@ void Card::open()
     findChild<QLabel*>(QString ("back"))->hide();
 }
 
-// Suoritetaan, kun widgettiä kaksoisklikataan.
+// Executed when the card is double clicked
 void Card::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if(canOpen_&&(stackedCard_==nullptr)){
@@ -149,7 +149,7 @@ void Card::setupLayout()
     setupFront();
 }
 
-// Asettaa kortin attribuuttiin oikean maakuvan, että sitä voidaan käyttää piirtämisessä.
+// Set the correct land picture so it may be used in drawing the card
 void Card::setSuitPixmap()
 {
     switch (suit_) {
@@ -170,37 +170,36 @@ void Card::setSuitPixmap()
     }
 }
 
-// Piirtääkortin takapuolen widgettiin.
+// Draws the back of the card
 void Card::setupBack()
 {
-    // Muodostetaan uusi QLabel-olio, jonka sisällöksi laitetaan kortiolion
-    // attribuuttiin talletettu QPixmap-olio ja näytetään label widgetissä.
+    // Create a QLabel object which will house the picture of the back of the card
     QLabel* backImage = new QLabel(this);
     backImage->setObjectName("back");
     backImage->setPixmap(backPixmap_);
     backImage->show();
 }
 
-// Piirtää kortin etupuolen widgettiin.
+// Draws the front of the card
 void Card::setupFront()
 {
-    // Muodostetaan uusi QLabel-olio.
+    // Create a new QLabel object
     QLabel* frontImage = new QLabel(this);
     frontImage->setObjectName("front");
 
-    // Muodostetaan uusi QPixmap-olio, johon aletaan piirtää kortin etupuolta.
+    // Create a new QPixmap object and start drawing the front of the card
     QPixmap frontPixmap(backPixmap_.size());
     frontPixmap.fill(Qt::transparent);
     QPainter painter (&frontPixmap);
 
-    // Piirretään kortin pohja, eli kulmista pyöristetty suorakaide.
+    // Draw the base of the card, a rectangle with rounded edges
     QPainterPath path;
     path.addRoundedRect(QRectF(1, 1, frontPixmap.width()-1, frontPixmap.height()-2),
                         15, 15, Qt::RelativeSize);
     painter.fillPath(path, CARD_FRONT_COLOR);
     painter.drawPath(path);
 
-    // Piirretään kortin arvo ja maan kuvio.
+    // Draw the value of the card and its suit
     painter.setPen(QPen(Qt::black));
     QFont font = painter.font();
     font.setPixelSize(suitPixmap_.height());
@@ -213,7 +212,7 @@ void Card::setupFront()
     painter.drawText(frontPixmap.width()/2, 0, suitPixmap_.width() + 5,
                      suitPixmap_.height() + 5, Qt::AlignCenter, QString::number(value_));
 
-    // Asetetaan piirretty kuva näkyviin widgetissä.
+    // Set the picture we drew to be displayed on the frontimage QLabel
     frontImage->setPixmap(frontPixmap);
     frontImage->hide();
 }
